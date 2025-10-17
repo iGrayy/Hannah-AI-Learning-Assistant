@@ -1,0 +1,356 @@
+/* Learn Page Styles */
+
+.learn-container {
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #F8F9FA 0%, #FFFFFF 100%);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.learn-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    background: white;
+    border-bottom: 1px solid #E5E7EB;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.learn-header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.menu-icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #5F6368;
+    transition: background 0.2s ease;
+}
+
+.menu-icon-btn:hover {
+    background: #F1F3F4;
+}
+
+.learn-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.learn-logo-text {
+    font-size: 1.375rem;
+    font-weight: 400;
+    color: #5F6368;
+    letter-spacing: -0.01em;
+}
+
+.learn-header-right {
+    display: flex;
+    align-items: center;
+    margin-right: 1.5rem;
+}
+
+.avatar-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    border-radius: 50%;
+}
+
+.avatar-image {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+/* Main Content */
+.learn-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+}
+
+.learn-content {
+    max-width: 680px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.learn-title {
+    font-size: 3rem;
+    font-weight: 400;
+    color: #5F6368;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+/* Search Container */
+.learn-search-container {
+    position: relative;
+}
+
+.learn-search-box {
+    background: white;
+    border: 1px solid #DFE1E5;
+    border-radius: 24px;
+    padding: 0.875rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 1px 6px rgba(32, 33, 36, 0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 1.5rem;
+    cursor: text;
+}
+
+.learn-search-box:hover {
+    box-shadow: 0 2px 8px rgba(32, 33, 36, 0.14);
+    border-color: #E0E0E0;
+}
+
+.learn-search-box:focus-within {
+    box-shadow: 0 4px 12px rgba(32, 33, 36, 0.18);
+    border-color: #4285F4;
+}
+
+.learn-search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    color: #202124;
+    background: transparent;
+}
+
+.learn-search-input::placeholder {
+    color: #9AA0A6;
+}
+
+.upload-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #5F6368;
+    transition: all 0.3s ease;
+}
+
+.upload-btn:hover {
+    background: #F1F3F4;
+}
+
+.upload-btn.has-content {
+    color: #4285F4;
+    background: rgba(66, 133, 244, 0.1);
+}
+
+.upload-btn.has-content:hover {
+    background: rgba(66, 133, 244, 0.2);
+    transform: scale(1.05);
+}
+
+/* PDF Companion Card */
+.pdf-companion-card {
+    background: white;
+    border: 1px solid #E8EAED;
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    animation: slideUp 0.4s ease-out;
+}
+
+.pdf-companion-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.pdf-companion-icon {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+}
+
+.illustration {
+    width: 100%;
+    height: 100%;
+}
+
+.pdf-companion-content {
+    flex: 1;
+}
+
+.pdf-companion-title {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #202124;
+    margin-bottom: 0.5rem;
+}
+
+.pdf-companion-description {
+    font-size: 0.875rem;
+    color: #5F6368;
+    line-height: 1.5;
+}
+
+/* Footer Section */
+.learn-footer {
+    background: #E5E7EB;
+    padding: 3rem 1.5rem;
+    margin-top: 2rem;
+}
+
+.reading-nook-section {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.reading-nook-title {
+    font-size: 2rem;
+    font-weight: 400;
+    color: #5F6368;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+}
+
+.reading-nook-subtitle {
+    font-size: 0.938rem;
+    color: #80868B;
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+/* PDF Cards Grid */
+.pdf-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.pdf-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.pdf-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px);
+}
+
+.pdf-card-icon {
+    width: 48px;
+    height: 48px;
+    background: #F8F9FA;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pdf-card-title {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #202124;
+    margin: 0;
+}
+
+.pdf-card-description {
+    font-size: 0.875rem;
+    color: #5F6368;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Animations */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .learn-title {
+        font-size: 2rem;
+    }
+
+    .learn-main {
+        padding: 1.5rem 1rem;
+    }
+
+    .pdf-companion-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .pdf-companion-icon {
+        width: 100%;
+        max-width: 120px;
+        margin: 0 auto;
+    }
+
+    .pdf-cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .reading-nook-title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .learn-title {
+        font-size: 1.75rem;
+    }
+
+    .learn-logo-text {
+        font-size: 1.125rem;
+    }
+
+    .learn-footer {
+        padding: 2rem 1rem;
+    }
+}

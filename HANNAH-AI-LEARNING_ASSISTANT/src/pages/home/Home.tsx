@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Menu } from 'lucide-react'
 import './Home.css'
 
 export default function Home() {
+    const navigate = useNavigate()
     const [isVisible, setIsVisible] = useState(false)
     const [showModal, setShowModal] = useState(false)
 
@@ -298,6 +300,11 @@ export default function Home() {
                 {/* Right side - Icons */}
                 <div className="header-right-side">
                     <div className="header-icons-container">
+                        {/* Try Learn Button */}
+                        <button className="try-learn-button" onClick={() => navigate('/learn')}>
+                            Thử Hannah Learn
+                        </button>
+
                         {/* Hamburger Menu Icon */}
                         <button className="icon-button" aria-label="Menu">
                             <Menu className="w-5 h-5 text-gray-900" />

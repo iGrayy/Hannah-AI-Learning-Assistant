@@ -1190,29 +1190,6 @@ header {
     gap: 0.75rem;
 }
 
-.try-learn-button {
-    padding: 0.625rem 1.25rem;
-    background: linear-gradient(135deg, rgb(59, 130, 246), rgb(37, 99, 235));
-    color: white;
-    border: none;
-    border-radius: 20px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
-}
-
-.try-learn-button:hover {
-    background: linear-gradient(135deg, rgb(37, 99, 235), rgb(29, 78, 216));
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-    transform: translateY(-1px);
-}
-
-.try-learn-button:active {
-    transform: translateY(0);
-}
-
 .avatar-button {
     width: 2.25rem;
     height: 2.25rem;
