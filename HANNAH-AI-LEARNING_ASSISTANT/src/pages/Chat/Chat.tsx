@@ -643,7 +643,7 @@ OOP mang lại nhiều lợi thế, bao gồm:
                         </button>
                         {showAvatarMenu && (
                             <div className="avatar-dropdown">
-                                <button className="avatar-dropdown-item">
+                                <button className="avatar-dropdown-item" onClick={() => navigate('/profile')}>
                                     <User size={18} />
                                     <span>Hồ sơ</span>
                                 </button>
