@@ -100,12 +100,12 @@ OOP đại diện cho một cách suy nghĩ khác về lập trình - tập trun
 **Mô hình hóa thực tế**
 Các đối tượng phản ánh các thực thể trong thế giới thực, làm cho code trở nên trực quan và dễ bảo trì hơn.
 
-OOP offers several advantages, including:
+OOP mang lại nhiều lợi thế, bao gồm:
 
-[INTERACTIVE_LIST:Advantages of OOP]
-[SOURCE:1:Modularity:🔷:Code is organized into self-contained objects, making it easier to manage and understand.:https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object-oriented_programming]
-[SOURCE:2:Reusability:🔄:Objects and classes can be reused in different parts of a program or in different projects, reducing development time.:https://www.geeksforgeeks.org/object-oriented-programming-oops-concept-in-java/]
-[SOURCE:3:Maintainability:🔧:Changes to one object are less likely to affect other parts of the program.:https://stackoverflow.com/questions/1031273/what-is-polymorphism-what-is-it-for-and-how-is-it-used]
+[INTERACTIVE_LIST:Ưu điểm của OOP]
+[SOURCE:1:Tính mô-đun:🔷:Code được tổ chức thành các đối tượng độc lập, giúp quản lý và hiểu dễ dàng hơn.:https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object-oriented_programming]
+[SOURCE:2:Khả năng tái sử dụng:🔄:Các đối tượng và lớp có thể được tái sử dụng trong nhiều phần khác nhau của chương trình hoặc trong các dự án khác, giảm thời gian phát triển.:https://www.geeksforgeeks.org/object-oriented-programming-oops-concept-in-java/]
+[SOURCE:3:Dễ bảo trì:🔧:Thay đổi một đối tượng ít có khả năng ảnh hưởng đến các phần khác của chương trình.:https://stackoverflow.com/questions/1031273/what-is-polymorphism-what-is-it-for-and-how-is-it-used]
 [/INTERACTIVE_LIST]
 
 **Lợi ích của OOP**
@@ -114,12 +114,12 @@ OOP offers several advantages, including:
 - Bảo trì và cập nhật dễ dàng hơn
 - Thiết kế trực quan hơn
 
-[VIDEO_CONTENT:Object-Oriented Programming Explained:https://www.youtube.com/embed/pTB0EiLXUC8]
+[VIDEO_CONTENT:Giải thích về Lập trình Hướng đối tượng:https://www.youtube.com/embed/pTB0EiLXUC8]
 
-[RELATED_CONTENT:Explore related content]
-[CONTENT:1:Object-oriented programming is a programming paradigm:Get a general overview of object-oriented programming on Wikipedia.:https://en.wikipedia.org/wiki/Object-oriented_programming:Wikipedia:W:OOP]
-[CONTENT:2:Java OOP (Object-Oriented Programming):Explore how OOP is implemented in Java.:https://www.w3schools.com/java/java_oop.asp:W3Schools:W:Java OOP (Object-Oriented Pr...]
-[CONTENT:3:OOP Terminology:Look up key OOP terms and definitions.:https://www.geeksforgeeks.org/object-oriented-programming-oops-concept-in-java/:GeeksforGeeks:G:OOP]
+[RELATED_CONTENT:Khám phá nội dung liên quan]
+[CONTENT:1:Lập trình hướng đối tượng là một mô hình lập trình:Tìm hiểu tổng quan về lập trình hướng đối tượng trên Wikipedia.:https://en.wikipedia.org/wiki/Object-oriented_programming:Wikipedia:W:OOP]
+[CONTENT:2:Java OOP (Lập trình Hướng đối tượng):Khám phá cách OOP được triển khai trong Java.:https://www.w3schools.com/java/java_oop.asp:W3Schools:W:Java OOP (Lập trình Hướng...]
+[CONTENT:3:Thuật ngữ OOP:Tra cứu các thuật ngữ và định nghĩa chính của OOP.:https://www.geeksforgeeks.org/object-oriented-programming-oops-concept-in-java/:GeeksforGeeks:G:OOP]
 [/RELATED_CONTENT]`,
             isStreaming: false
         }
@@ -728,15 +728,15 @@ OOP offers several advantages, including:
                                                 <div className="message-suggestions">
                                                     <button className="suggestion-btn">
                                                         <span className="suggestion-icon">≡</span>
-                                                        <span>Simplify</span>
+                                                        <span>Đơn giản hóa</span>
                                                     </button>
                                                     <button className="suggestion-btn">
                                                         <span className="suggestion-icon">≡</span>
-                                                        <span>Go deeper</span>
+                                                        <span>Tìm hiểu sâu hơn</span>
                                                     </button>
                                                     <button className="suggestion-btn">
                                                         <span className="suggestion-icon">🖼</span>
-                                                        <span>Get images</span>
+                                                        <span>Lấy hình ảnh</span>
                                                     </button>
                                                 </div>
                                                 <div className="message-actions">
@@ -752,9 +752,9 @@ OOP offers several advantages, including:
                                                 </div>
                                             </div>
                                             <div className="follow-up-questions">
-                                                <button className="follow-up-btn">Tell me more about classes and objects.</button>
-                                                <button className="follow-up-btn">Explain encapsulation in more detail.</button>
-                                                <button className="follow-up-btn">What are some programming languages that use OOP?</button>
+                                                <button className="follow-up-btn">Cho tôi biết thêm về lớp và đối tượng.</button>
+                                                <button className="follow-up-btn">Giải thích chi tiết hơn về đóng gói.</button>
+                                                <button className="follow-up-btn">Một số ngôn ngữ lập trình sử dụng OOP là gì?</button>
                                             </div>
                                         </>
                                     )}
