@@ -29,7 +29,7 @@ export default function Learn() {
                     </button> */}
                     <div className="learn-logo">
                         <Sparkles size={24} color="#4285F4" />
-                        <span className="learn-logo-text">Hannah</span>
+                        <span className="learn-logo-text">Hannah Assistant</span>
                     </div>
                 </div>
                 <div className="learn-header-right">
