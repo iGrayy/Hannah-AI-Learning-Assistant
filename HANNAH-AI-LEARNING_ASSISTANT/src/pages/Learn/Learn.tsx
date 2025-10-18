@@ -1,11 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Sparkles, Upload, Send, FileText, Book, Database, Server } from 'lucide-react'
+import { Sparkles, Upload, Send, History, X, User, LogOut } from 'lucide-react'
 import './Learn.css'
 
 export default function Learn() {
     const navigate = useNavigate()
     const [searchQuery, setSearchQuery] = useState('')
+    const [showHistorySidebar, setShowHistorySidebar] = useState(false)
+    const [showAvatarMenu, setShowAvatarMenu] = useState(false)
+    const avatarMenuRef = useRef<HTMLDivElement>(null)
 
     const handleSearch = () => {
         if (searchQuery.trim()) {
@@ -19,35 +22,159 @@ export default function Learn() {
         }
     }
 
+    // Close avatar menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (avatarMenuRef.current && !avatarMenuRef.current.contains(event.target as Node)) {
+                setShowAvatarMenu(false)
+            }
+        }
+
+        if (showAvatarMenu) {
+            document.addEventListener('mousedown', handleClickOutside)
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [showAvatarMenu])
+
     return (
         <div className="learn-container">
             {/* Header */}
             <header className="learn-header">
                 <div className="learn-header-left">
+                    <button
+                        className="history-toggle-btn"
+                        onClick={() => setShowHistorySidebar(!showHistorySidebar)}
+                        aria-label="Lịch sử cuộc trò chuyện"
+                        title="Lịch sử cuộc trò chuyện"
+                    >
+                        <History size={20} />
+                    </button>
                     {/* <button className="menu-icon-btn back-btn" aria-label="Back to Home" onClick={() => navigate('/')}>
                         <ArrowLeft size={24} />
-                    </button> */}
+                        </button> */}
                     <div className="learn-logo">
                         <Sparkles size={24} color="#4285F4" />
                         <span className="learn-logo-text">Hannah Assistant</span>
                     </div>
                 </div>
                 <div className="learn-header-right">
-                    <button className="avatar-btn" aria-label="Hồ sơ người dùng">
-                        <img
-                            src="https://ui-avatars.com/api/?name=User&background=4285F4&color=fff&size=32"
-                            alt="Ảnh đại diện"
-                            className="avatar-image"
-                        />
-                    </button>
+                    <div className="avatar-menu-container" ref={avatarMenuRef}>
+                        <button 
+                            className="avatar-btn" 
+                            aria-label="Hồ sơ người dùng"
+                            onClick={() => setShowAvatarMenu(!showAvatarMenu)}
+                        >
+                            <img
+                                src="https://ui-avatars.com/api/?name=User&background=4285F4&color=fff&size=32"
+                                alt="Ảnh đại diện"
+                                className="avatar-image"
+                            />
+                        </button>
+                        {showAvatarMenu && (
+                            <div className="avatar-dropdown">
+                                <button className="avatar-dropdown-item" onClick={() => {
+                                    setShowAvatarMenu(false)
+                                    // Navigate to profile page
+                                    console.log('Navigate to profile')
+                                }}>
+                                    <User size={18} />
+                                    <span>Hồ sơ</span>
+                                </button>
+                                <button className="avatar-dropdown-item" onClick={() => {
+                                    setShowAvatarMenu(false)
+                                    // Handle logout
+                                    console.log('Logout')
+                                }}>
+                                    <LogOut size={18} />
+                                    <span>Đăng xuất</span>
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </header>
+
+            {/* History Sidebar */}
+            {showHistorySidebar && (
+                <>
+                    <div className="history-sidebar-overlay" onClick={() => setShowHistorySidebar(false)} />
+                    <aside className="history-sidebar">
+                        <div className="history-sidebar-header">
+                            <h2 className="history-sidebar-title">Lịch sử cuộc trò chuyện</h2>
+                            <button
+                                className="history-sidebar-close"
+                                onClick={() => setShowHistorySidebar(false)}
+                                aria-label="Đóng"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="history-sidebar-content">
+                            {/* Today */}
+                            <div className="history-section">
+                                <h3 className="history-section-title">Hôm nay</h3>
+                                <div className="history-items">
+                                    <button className="history-item" onClick={() => navigate('/chat', { state: { query: 'Lập trình Hướng đối tượng (OOP)' } })}>
+                                        <span className="history-item-icon">💬</span>
+                                        <span className="history-item-text">Lập trình Hướng đối tượng (OOP)</span>
+                                    </button>
+                                    <button className="history-item" onClick={() => navigate('/chat', { state: { query: 'Data Structures và Algorithms' } })}>
+                                        <span className="history-item-icon">💬</span>
+                                        <span className="history-item-text">Data Structures và Algorithms</span>
+                                    </button>
+                                    <button className="history-item" onClick={() => navigate('/chat', { state: { query: 'React Hooks và State Management' } })}>
+                                        <span className="history-item-icon">💬</span>
+                                        <span className="history-item-text">React Hooks và State Management</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Yesterday */}
+                            <div className="history-section">
+                                <h3 className="history-section-title">Hôm qua</h3>
+                                <div className="history-items">
+                                    <button className="history-item" onClick={() => navigate('/chat', { state: { query: 'Database Design và SQL' } })}>
+                                        <span className="history-item-icon">💬</span>
+                                        <span className="history-item-text">Database Design và SQL</span>
+                                    </button>
+                                    <button className="history-item" onClick={() => navigate('/chat', { state: { query: 'Machine Learning cơ bản' } })}>
+                                        <span className="history-item-icon">💬</span>
+                                        <span className="history-item-text">Machine Learning cơ bản</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Last 7 days */}
+                            <div className="history-section">
+                                <h3 className="history-section-title">7 ngày trước</h3>
+                                <div className="history-items">
+                                    <button className="history-item" onClick={() => navigate('/chat', { state: { query: 'RESTful API Design' } })}>
+                                        <span className="history-item-icon">💬</span>
+                                        <span className="history-item-text">RESTful API Design</span>
+                                    </button>
+                                    <button className="history-item" onClick={() => navigate('/chat', { state: { query: 'Git và Version Control' } })}>
+                                        <span className="history-item-icon">💬</span>
+                                        <span className="history-item-text">Git và Version Control</span>
+                                    </button>
+                                    <button className="history-item" onClick={() => navigate('/chat', { state: { query: 'Docker và Containerization' } })}>
+                                        <span className="history-item-icon">💬</span>
+                                        <span className="history-item-text">Docker và Containerization</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+                </>
+            )}
 
             {/* Main Content */}
             <main className="learn-main">
                 <div className="learn-content">
                     <h1 className="learn-title">Bạn muốn học về điều gì?</h1>
-                    
+
                     {/* Search Box */}
                     <div className="learn-search-container">
                         <div className="learn-search-box">
@@ -59,7 +186,7 @@ export default function Learn() {
                                 onKeyPress={handleKeyPress}
                                 className="learn-search-input"
                             />
-                            <button 
+                            <button
                                 className={`upload-btn ${searchQuery.trim() ? 'has-content' : ''}`}
                                 aria-label={searchQuery.trim() ? 'Gửi' : 'Tải lên'}
                                 onClick={searchQuery.trim() ? handleSearch : undefined}
@@ -72,32 +199,35 @@ export default function Learn() {
                             </button>
                         </div>
 
-                        {/* PDF Reading Companion Card */}
-                        <div className="pdf-companion-card">
-                            <div className="pdf-companion-icon">
-                                <svg viewBox="0 0 100 100" className="illustration">
-                                    <defs>
-                                        <linearGradient id="bookGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                            <stop offset="0%" style={{ stopColor: '#F59E0B', stopOpacity: 0.3 }} />
-                                            <stop offset="100%" style={{ stopColor: '#FBBF24', stopOpacity: 0.6 }} />
-                                        </linearGradient>
-                                    </defs>
-                                    {/* Book */}
-                                    <rect x="30" y="20" width="40" height="55" fill="url(#bookGradient)" rx="2"/>
-                                    <rect x="30" y="20" width="5" height="55" fill="#F59E0B" opacity="0.5"/>
-                                    <line x1="45" y1="35" x2="60" y2="35" stroke="#F59E0B" strokeWidth="2"/>
-                                    <line x1="45" y1="45" x2="60" y2="45" stroke="#F59E0B" strokeWidth="2"/>
-                                    <line x1="45" y1="55" x2="55" y2="55" stroke="#F59E0B" strokeWidth="2"/>
-                                    {/* Person */}
-                                    <circle cx="50" cy="65" r="8" fill="#FBBF24"/>
-                                    <path d="M 42 73 Q 50 78, 58 73 L 58 85 L 42 85 Z" fill="#F59E0B"/>
-                                </svg>
-                            </div>
-                            <div className="pdf-companion-content">
-                                <h3 className="pdf-companion-title">Trợ lý Đọc PDF</h3>
-                                <p className="pdf-companion-description">
-                                    Tải lên PDF hoặc nhập URL để sử dụng công cụ đọc mới giúp phân tích và hướng dẫn bạn qua các câu hỏi và khái niệm.
-                                </p>
+                        {/* Dashed Border Wrapper */}
+                        <div className="dashed-border-wrapper">
+                            {/* PDF Reading Companion Card */}
+                            <div className="pdf-companion-card">
+                                <div className="pdf-companion-icon">
+                                    <svg viewBox="0 0 100 100" className="illustration">
+                                        <defs>
+                                            <linearGradient id="bookGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                <stop offset="0%" style={{ stopColor: '#F59E0B', stopOpacity: 0.3 }} />
+                                                <stop offset="100%" style={{ stopColor: '#FBBF24', stopOpacity: 0.6 }} />
+                                            </linearGradient>
+                                        </defs>
+                                        {/* Book */}
+                                        <rect x="30" y="20" width="40" height="55" fill="url(#bookGradient)" rx="2" />
+                                        <rect x="30" y="20" width="5" height="55" fill="#F59E0B" opacity="0.5" />
+                                        <line x1="45" y1="35" x2="60" y2="35" stroke="#F59E0B" strokeWidth="2" />
+                                        <line x1="45" y1="45" x2="60" y2="45" stroke="#F59E0B" strokeWidth="2" />
+                                        <line x1="45" y1="55" x2="55" y2="55" stroke="#F59E0B" strokeWidth="2" />
+                                        {/* Person */}
+                                        <circle cx="50" cy="65" r="8" fill="#FBBF24" />
+                                        <path d="M 42 73 Q 50 78, 58 73 L 58 85 L 42 85 Z" fill="#F59E0B" />
+                                    </svg>
+                                </div>
+                                <div className="pdf-companion-content">
+                                    <h3 className="pdf-companion-title">Trợ lý Đọc Tài Liệu</h3>
+                                    <p className="pdf-companion-description">
+                                        Tải lên tài liệu để sử dụng công cụ đọc mới giúp phân tích và hướng dẫn bạn qua các câu hỏi và khái niệm.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -107,44 +237,84 @@ export default function Learn() {
             {/* Footer Section */}
             <footer className="learn-footer">
                 <div className="reading-nook-section">
-                    <h2 className="reading-nook-title">Thư viện Tài liệu</h2>
-                    <p className="reading-nook-subtitle">Một số PDF để thử nghiệm</p>
-                    
-                    <div className="pdf-cards-grid">
-                        {/* PDF Card 1 */}
-                        <div className="pdf-card">
-                            <div className="pdf-card-icon">
-                                <FileText size={40} color="#DC2626" />
+                    <h2 className="reading-nook-title">Chủ Đề Được Quan Tâm</h2>
+                    <p className="reading-nook-subtitle">Một số chủ đề để khám phá</p>
+
+                    {/* Bookshelf with 3D Books */}
+                    <div className="bookshelf-scene">
+                        <div className="bookshelf-books">
+                            {/* Book 1 - Data Structures */}
+                            <div className="book-3d book-green-dark" onClick={() => navigate('/chat', { state: { query: 'Học về Data Structures và Algorithms' } })}>
+                                <div className="book-cover">
+                                    <div className="book-cover-content">
+                                        {/* <span className="book-main-title">CẤU TRÚC</span> */}
+                                        <span className="book-main-title">DATA<br />STRUCTURES</span>
+                                        <span className="book-small-text">& ALGORITHMS</span>
+                                    </div>
+                                </div>
+                                <div className="book-spine-3d"></div>
                             </div>
-                            <h4 className="pdf-card-title">Tài liệu React</h4>
-                            <p className="pdf-card-description">Học về React hooks và components</p>
+
+                            {/* Book 2 - Web Development */}
+                            <div className="book-3d book-red" onClick={() => navigate('/chat', { state: { query: 'Học Web Development Frontend và Backend' } })}>
+                                <div className="book-cover">
+                                    <div className="book-cover-content">
+                                        <span className="book-main-title">WEB<br />DEVELOPMENT</span>
+                                        <span className="book-author">Frontend & Backend</span>
+                                    </div>
+                                </div>
+                                <div className="book-spine-3d"></div>
+                            </div>
+
+                            {/* Book 3 - Database Design */}
+                            <div className="book-3d book-orange" onClick={() => navigate('/chat', { state: { query: 'Học Database Design và SQL' } })}>
+                                <div className="book-cover">
+                                    <div className="book-cover-content">
+                                        <span className="book-main-title">DATABASE<br />DESIGN</span>
+                                        <span className="book-author">SQL & NoSQL</span>
+                                    </div>
+                                </div>
+                                <div className="book-spine-3d"></div>
+                            </div>
+
+                            {/* Book 4 - System Design */}
+                            <div className="book-3d book-beige" onClick={() => navigate('/chat', { state: { query: 'Học System Design và Architecture' } })}>
+                                <div className="book-cover">
+                                    <div className="book-cover-content">
+                                        <span className="book-main-title">SYSTEM<br />DESIGN</span>
+                                        <span className="book-author">Architecture Patterns</span>
+                                    </div>
+                                </div>
+                                <div className="book-spine-3d"></div>
+                            </div>
+
+                            {/* Book 5 - Cloud Computing */}
+                            <div className="book-3d book-blue" onClick={() => navigate('/chat', { state: { query: 'Học Cloud Computing AWS Azure GCP' } })}>
+                                <div className="book-cover">
+                                    <div className="book-cover-content">
+                                        <span className="book-main-title">CLOUD<br />COMPUTING</span>
+                                        <span className="book-author-small">AWS • AZURE • GCP</span>
+                                    </div>
+                                </div>
+                                <div className="book-spine-3d"></div>
+                            </div>
+
+                            {/* Book 6 - DevOps */}
+                            <div className="book-3d book-green" onClick={() => navigate('/chat', { state: { query: 'Học DevOps CI/CD Docker Kubernetes' } })}>
+                                <div className="book-cover">
+                                    <div className="book-cover-content">
+                                        <span className="book-main-title">DEVOPS</span>
+                                        <span className="book-author">CI/CD & Containers</span>
+                                    </div>
+                                </div>
+                                <div className="book-spine-3d"></div>
+                            </div>
                         </div>
 
-                        {/* PDF Card 2 */}
-                        <div className="pdf-card">
-                            <div className="pdf-card-icon">
-                                <Book size={40} color="#2563EB" />
-                            </div>
-                            <h4 className="pdf-card-title">Sổ tay TypeScript</h4>
-                            <p className="pdf-card-description">Tìm hiểu về TypeScript types</p>
-                        </div>
-
-                        {/* PDF Card 3 */}
-                        <div className="pdf-card">
-                            <div className="pdf-card-icon">
-                                <Server size={40} color="#059669" />
-                            </div>
-                            <h4 className="pdf-card-title">Hướng dẫn Node.js</h4>
-                            <p className="pdf-card-description">Backend development với Node.js</p>
-                        </div>
-
-                        {/* PDF Card 4 */}
-                        <div className="pdf-card">
-                            <div className="pdf-card-icon">
-                                <Database size={40} color="#7C3AED" />
-                            </div>
-                            <h4 className="pdf-card-title">Thiết kế Cơ sở dữ liệu</h4>
-                            <p className="pdf-card-description">SQL và NoSQL databases</p>
+                        {/* Shelf */}
+                        <div className="bookshelf-shelf">
+                            <div className="shelf-top"></div>
+                            <div className="shelf-front"></div>
                         </div>
                     </div>
                 </div>

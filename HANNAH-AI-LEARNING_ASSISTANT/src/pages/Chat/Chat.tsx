@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Sparkles, Send, ThumbsUp, ThumbsDown, Share2, Upload, Book, PanelLeftClose, PanelLeft, PanelRightClose, PanelRight, Wand2, GitBranch, FileText, ClipboardCheck, StickyNote, Loader2, MoreVertical, Trash2 } from 'lucide-react'
+import { Sparkles, Send, ThumbsUp, ThumbsDown, Share2, Upload, Book, PanelLeftClose, PanelLeft, PanelRightClose, PanelRight, Wand2, GitBranch, FileText, ClipboardCheck, StickyNote, Loader2, MoreVertical, Trash2, ChevronDown, ChevronUp, Link as LinkIcon, List, Pencil, Maximize2, Minimize2, User, LogOut, Share } from 'lucide-react'
 import './Chat.css'
 
 interface StudioItem {
@@ -10,6 +10,31 @@ interface StudioItem {
     subtitle: string
     status: 'loading' | 'completed'
     timestamp: string
+}
+
+interface Source {
+    id: string
+    title: string
+    url: string
+    description: string
+    icon?: string
+}
+
+interface RelatedContent {
+    id: string
+    title: string
+    description: string
+    url: string
+    source: string
+    sourceIcon?: string
+    shortTitle?: string
+}
+
+interface Message {
+    type: string
+    content: string
+    isStreaming?: boolean
+    relatedContent?: RelatedContent[]
 }
 
 export default function Chat() {
@@ -26,6 +51,7 @@ export default function Chat() {
     const [showMindmapModal, setShowMindmapModal] = useState(false)
     const [showNotecardModal, setShowNotecardModal] = useState(false)
     const [showQuizModal, setShowQuizModal] = useState(false)
+    const [showQuizSideModal, setShowQuizSideModal] = useState(false)
     const [selectedMindmapId, setSelectedMindmapId] = useState<string | null>(null)
     const [selectedNotecardId, setSelectedNotecardId] = useState<string | null>(null)
     const [selectedQuizId, setSelectedQuizId] = useState<string | null>(null)
@@ -33,9 +59,29 @@ export default function Chat() {
     const [currentCardIndex, setCurrentCardIndex] = useState(0)
     const [isCardFlipped, setIsCardFlipped] = useState(false)
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-    const [selectedAnswers, setSelectedAnswers] = useState<{[key: number]: string}>({})
+    const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: string }>({})
     const [openMenuId, setOpenMenuId] = useState<string | null>(null)
-    const [messages, setMessages] = useState([
+    const [expandedSources, setExpandedSources] = useState<{ [key: string]: boolean }>({})
+    const [showCustomizeModal, setShowCustomizeModal] = useState(false)
+    const [showAvatarMenu, setShowAvatarMenu] = useState(false)
+    const [showShareModal, setShowShareModal] = useState(false)
+    const [shareEmail, setShareEmail] = useState('')
+    const [sharePermission, setSharePermission] = useState<'view' | 'edit'>('view')
+    const [notifyPeople, setNotifyPeople] = useState(true)
+    const [generalAccess, setGeneralAccess] = useState<'restricted' | 'anyone'>('restricted')
+    const [showAccessDropdown, setShowAccessDropdown] = useState(false)
+    const avatarMenuRef = useRef<HTMLDivElement>(null)
+    const shareModalRef = useRef<HTMLDivElement>(null)
+    const accessDropdownRef = useRef<HTMLDivElement>(null)
+    const [selectedFeatureType, setSelectedFeatureType] = useState<'mindmap' | 'notecard' | 'quiz' | null>(null)
+    const [customizeTab, setCustomizeTab] = useState<'conversation' | 'course'>('conversation')
+    const [cardQuantity, setCardQuantity] = useState<number>(6) // Default: 6 (Tiêu chuẩn)
+    const [cardDifficulty, setCardDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium')
+    const [cardTopic, setCardTopic] = useState('')
+    const [selectedCourseCode, setSelectedCourseCode] = useState('')
+    const [courseSearchQuery, setCourseSearchQuery] = useState('')
+    const [showCourseDropdown, setShowCourseDropdown] = useState(false)
+    const [messages, setMessages] = useState<Message[]>([
         {
             type: 'user',
             content: initialQuery
@@ -54,14 +100,41 @@ OOP đại diện cho một cách suy nghĩ khác về lập trình - tập trun
 **Mô hình hóa thực tế**
 Các đối tượng phản ánh các thực thể trong thế giới thực, làm cho code trở nên trực quan và dễ bảo trì hơn.
 
+OOP offers several advantages, including:
+
+[INTERACTIVE_LIST:Advantages of OOP]
+[SOURCE:1:Modularity:🔷:Code is organized into self-contained objects, making it easier to manage and understand.:https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object-oriented_programming]
+[SOURCE:2:Reusability:🔄:Objects and classes can be reused in different parts of a program or in different projects, reducing development time.:https://www.geeksforgeeks.org/object-oriented-programming-oops-concept-in-java/]
+[SOURCE:3:Maintainability:🔧:Changes to one object are less likely to affect other parts of the program.:https://stackoverflow.com/questions/1031273/what-is-polymorphism-what-is-it-for-and-how-is-it-used]
+[/INTERACTIVE_LIST]
+
 **Lợi ích của OOP**
 - Tổ chức code tốt hơn
 - Khả năng tái sử dụng thông qua kế thừa
 - Bảo trì và cập nhật dễ dàng hơn
-- Thiết kế trực quan hơn`,
+- Thiết kế trực quan hơn
+
+[VIDEO_CONTENT:Object-Oriented Programming Explained:https://www.youtube.com/embed/pTB0EiLXUC8]
+
+[RELATED_CONTENT:Explore related content]
+[CONTENT:1:Object-oriented programming is a programming paradigm:Get a general overview of object-oriented programming on Wikipedia.:https://en.wikipedia.org/wiki/Object-oriented_programming:Wikipedia:W:OOP]
+[CONTENT:2:Java OOP (Object-Oriented Programming):Explore how OOP is implemented in Java.:https://www.w3schools.com/java/java_oop.asp:W3Schools:W:Java OOP (Object-Oriented Pr...]
+[CONTENT:3:OOP Terminology:Look up key OOP terms and definitions.:https://www.geeksforgeeks.org/object-oriented-programming-oops-concept-in-java/:GeeksforGeeks:G:OOP]
+[/RELATED_CONTENT]`,
             isStreaming: false
         }
     ])
+
+    const courseCodes = [
+        { code: 'CSD', name: 'Cấu trúc dữ liệu và giải thuật' },
+        { code: 'CSI', name: 'Cơ sở dữ liệu' },
+        { code: 'PRO', name: 'Lập trình hướng đối tượng' },
+        { code: 'PRM', name: 'Quản lý dự án' },
+        { code: 'WEB', name: 'Phát triển Web' },
+        { code: 'MAD', name: 'Phát triển ứng dụng di động' },
+        { code: 'DBI', name: 'Thiết kế cơ sở dữ liệu' },
+        { code: 'OSG', name: 'Hệ điều hành' }
+    ]
 
     const bigPictureTopics = [
         {
@@ -143,6 +216,34 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
         setShowReportFormatModal(false)
     }
 
+    const handleCustomizeSubmit = () => {
+        if (selectedFeatureType) {
+            const featureTitles = {
+                'mindmap': 'Bản đồ tư duy',
+                'notecard': 'Thẻ ghi nhớ',
+                'quiz': 'Bài kiểm tra'
+            }
+            createStudioItem(selectedFeatureType, featureTitles[selectedFeatureType])
+
+            // Log the settings for debugging (remove in production)
+            console.log('Creating item with settings:', {
+                type: selectedFeatureType,
+                quantity: cardQuantity,
+                difficulty: cardDifficulty,
+                topic: cardTopic
+            })
+        }
+        setShowCustomizeModal(false)
+        // Reset form
+        setCustomizeTab('conversation')
+        setCardQuantity(6) // Reset to default 6
+        setCardDifficulty('medium')
+        setCardTopic('')
+        setSelectedCourseCode('')
+        setCourseSearchQuery('')
+        setShowCourseDropdown(false)
+    }
+
     const handleDeleteItem = (itemId: string) => {
         setStudioItems(prev => prev.filter(item => item.id !== itemId))
         setOpenMenuId(null)
@@ -159,13 +260,31 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
             if (!target.closest('.studio-item-menu-container')) {
                 setOpenMenuId(null)
             }
+            // Close course dropdown when clicking outside
+            if (!target.closest('.course-code-dropdown')) {
+                setShowCourseDropdown(false)
+            }
+            // Close avatar menu when clicking outside
+            if (avatarMenuRef.current && !avatarMenuRef.current.contains(target)) {
+                setShowAvatarMenu(false)
+            }
+            // Close access dropdown when clicking outside
+            if (accessDropdownRef.current && !accessDropdownRef.current.contains(target)) {
+                setShowAccessDropdown(false)
+            }
         }
 
-        if (openMenuId) {
+        if (openMenuId || showCourseDropdown || showAvatarMenu || showAccessDropdown) {
             document.addEventListener('click', handleClickOutside)
             return () => document.removeEventListener('click', handleClickOutside)
         }
-    }, [openMenuId])
+    }, [openMenuId, showCourseDropdown, showAvatarMenu, showAccessDropdown])
+
+    const handleCopyLink = () => {
+        const link = window.location.href
+        navigator.clipboard.writeText(link)
+        alert('Đã sao chép đường liên kết!')
+    }
 
     // Handle keyboard navigation for notecards
     useEffect(() => {
@@ -220,6 +339,281 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
         }
     }
 
+    // Parse interactive list and related content from content
+    const parseInteractiveList = (content: string) => {
+        const parts: Array<{ type: 'text' | 'interactive-list' | 'related-content' | 'video-content', content: string, title?: string, sources?: Source[], relatedItems?: RelatedContent[], videoUrl?: string, videoTitle?: string }> = []
+        const interactiveListRegex = /\[INTERACTIVE_LIST:(.*?)\]([\s\S]*?)\[\/INTERACTIVE_LIST\]/g
+        const relatedContentRegex = /\[RELATED_CONTENT:(.*?)\]([\s\S]*?)\[\/RELATED_CONTENT\]/g
+        const videoContentRegex = /\[VIDEO_CONTENT:(.*?):(.*?)\]/g
+
+        // Create a combined regex to find all special blocks
+        const allMatches: Array<{ type: 'interactive-list' | 'related-content' | 'video-content', match: RegExpExecArray }> = []
+
+        let match
+        while ((match = interactiveListRegex.exec(content)) !== null) {
+            allMatches.push({ type: 'interactive-list', match })
+        }
+
+        while ((match = relatedContentRegex.exec(content)) !== null) {
+            allMatches.push({ type: 'related-content', match })
+        }
+
+        while ((match = videoContentRegex.exec(content)) !== null) {
+            allMatches.push({ type: 'video-content', match })
+        }
+
+        // Sort by position
+        allMatches.sort((a, b) => a.match.index - b.match.index)
+
+        let lastIndex = 0
+
+        for (const { type, match } of allMatches) {
+            // Add text before this block
+            if (match.index > lastIndex) {
+                parts.push({
+                    type: 'text',
+                    content: content.substring(lastIndex, match.index)
+                })
+            }
+
+            if (type === 'interactive-list') {
+                const title = match[1]
+                const listContent = match[2]
+                const sources: Source[] = []
+
+                // Parse sources
+                const sourceRegex = /\[SOURCE:(\d+):(.*?):(.*?):(.*?):(.*?)\]/g
+                let sourceMatch
+
+                while ((sourceMatch = sourceRegex.exec(listContent)) !== null) {
+                    sources.push({
+                        id: sourceMatch[1],
+                        title: sourceMatch[2],
+                        icon: sourceMatch[3],
+                        description: sourceMatch[4],
+                        url: sourceMatch[5]
+                    })
+                }
+
+                parts.push({
+                    type: 'interactive-list',
+                    content: listContent,
+                    title,
+                    sources
+                })
+            } else if (type === 'video-content') {
+                const videoTitle = match[1]
+                const videoUrl = match[2]
+
+                parts.push({
+                    type: 'video-content',
+                    content: '',
+                    videoTitle,
+                    videoUrl
+                })
+            } else if (type === 'related-content') {
+                const title = match[1]
+                const contentBlock = match[2]
+                const relatedItems: RelatedContent[] = []
+
+                // Parse related content items: [CONTENT:id:title:description:url:source:sourceIcon:shortTitle]
+                const contentRegex = /\[CONTENT:(\d+):(.*?):(.*?):(.*?):(.*?):(.*?):(.*?)\]/g
+                let contentMatch
+
+                while ((contentMatch = contentRegex.exec(contentBlock)) !== null) {
+                    relatedItems.push({
+                        id: contentMatch[1],
+                        title: contentMatch[2],
+                        description: contentMatch[3],
+                        url: contentMatch[4],
+                        source: contentMatch[5],
+                        sourceIcon: contentMatch[6],
+                        shortTitle: contentMatch[7]
+                    })
+                }
+
+                parts.push({
+                    type: 'related-content',
+                    content: contentBlock,
+                    title,
+                    relatedItems
+                })
+            }
+
+            lastIndex = match.index + match[0].length
+        }
+
+        // Add remaining text
+        if (lastIndex < content.length) {
+            parts.push({
+                type: 'text',
+                content: content.substring(lastIndex)
+            })
+        }
+
+        return parts.length > 0 ? parts : [{ type: 'text' as const, content }]
+    }
+
+    // Auto-expand all interactive lists when messages change
+    useEffect(() => {
+        const newExpandedState: { [key: string]: boolean } = {}
+
+        messages.forEach((message, messageIndex) => {
+            const parts = parseInteractiveList(message.content)
+
+            parts.forEach((part, partIndex) => {
+                if (part.type === 'interactive-list') {
+                    newExpandedState[`${messageIndex}-${partIndex}`] = true
+                }
+            })
+        })
+
+        setExpandedSources(newExpandedState)
+    }, [messages])
+
+    const renderMessageContent = (content: string, messageIndex: number) => {
+        const parts = parseInteractiveList(content)
+
+        return parts.map((part, partIndex) => {
+            if (part.type === 'interactive-list') {
+                return (
+                    <div key={`part-${partIndex}`} className="message-sources">
+                        <button
+                            className="sources-toggle"
+                            onClick={() => setExpandedSources(prev => ({
+                                ...prev,
+                                [`${messageIndex}-${partIndex}`]: !prev[`${messageIndex}-${partIndex}`]
+                            }))}
+                        >
+                            <List size={18} />
+                            <span className="sources-label">Interactive List</span>
+                            <span className="sources-title">{part.title}</span>
+                            {expandedSources[`${messageIndex}-${partIndex}`] ? (
+                                <ChevronUp size={18} className="sources-chevron" />
+                            ) : (
+                                <ChevronDown size={18} className="sources-chevron" />
+                            )}
+                        </button>
+
+                        {expandedSources[`${messageIndex}-${partIndex}`] && (
+                            <div className="sources-list">
+                                {part.sources?.map((source) => (
+                                    <a
+                                        key={source.id}
+                                        href={source.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="source-item"
+                                    >
+                                        <div className="source-icon-wrapper">
+                                            {source.icon ? (
+                                                <span className="source-icon-emoji">{source.icon}</span>
+                                            ) : (
+                                                <div className="source-icon-placeholder">
+                                                    <Book size={24} />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="source-content">
+                                            <h4 className="source-title">{source.title}</h4>
+                                            <p className="source-description">{source.description}</p>
+                                        </div>
+                                        <button className="source-link-btn" aria-label="Open link">
+                                            <LinkIcon size={20} />
+                                        </button>
+                                    </a>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )
+            } else if (part.type === 'video-content') {
+                return (
+                    <div key={`part-${partIndex}`} className="video-content-container">
+                        <h3 className="video-content-title">{part.videoTitle || 'Related Video'}</h3>
+                        <div className="video-wrapper">
+                            <iframe
+                                src={part.videoUrl}
+                                title={part.videoTitle || 'Video'}
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                className="video-iframe"
+                            />
+                        </div>
+                    </div>
+                )
+            } else if (part.type === 'related-content') {
+                return (
+                    <div key={`part-${partIndex}`} className="related-content">
+                        <h3 className="related-content-title">{part.title}</h3>
+                        <div className="related-content-carousel">
+                            {part.relatedItems?.map((item) => (
+                                <a
+                                    key={item.id}
+                                    href={item.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="related-content-card"
+                                >
+                                    <div className="related-card-content">
+                                        <h4 className="related-card-title">{item.title}</h4>
+                                        <p className="related-card-description">{item.description}</p>
+                                    </div>
+                                    <div className="related-card-footer">
+                                        <div className="related-card-info">
+                                            <div className="related-card-short-title">{item.shortTitle || item.title}</div>
+                                            <div className="related-card-source">
+                                                {item.sourceIcon && (
+                                                    <span className="source-icon-badge">{item.sourceIcon}</span>
+                                                )}
+                                                {/* <span className="source-name">{item.source}</span> */}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                )
+            } else {
+                return (
+                    <div key={`part-${partIndex}`} className="message-text">
+                        {part.content.split('\n').map((line: string, i: number) => {
+                            // Handle bold text
+                            if (line.includes('**')) {
+                                const parts = line.split('**')
+                                return (
+                                    <p key={i}>
+                                        {parts.map((linePart: string, j: number) =>
+                                            j % 2 === 1 ? <strong key={j}>{linePart}</strong> : linePart
+                                        )}
+                                    </p>
+                                )
+                            }
+                            // Handle headings
+                            if (line.startsWith('### ')) {
+                                return <h3 key={i}>{line.replace('### ', '')}</h3>
+                            }
+                            if (line.startsWith('#### ')) {
+                                return <h4 key={i}>{line.replace('#### ', '')}</h4>
+                            }
+                            // Handle list items
+                            if (line.startsWith('- ')) {
+                                return <li key={i}>{line.replace('- ', '')}</li>
+                            }
+                            // Regular paragraph
+                            if (line.trim()) {
+                                return <p key={i}>{line}</p>
+                            }
+                            return null
+                        })}
+                    </div>
+                )
+            }
+        })
+    }
+
     return (
         <div className="chat-container">
             {/* Header */}
@@ -231,13 +625,35 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                     </div>
                 </div>
                 <div className="chat-header-right">
-                    <button className="avatar-btn" aria-label="Hồ sơ người dùng">
-                        <img
-                            src="https://ui-avatars.com/api/?name=User&background=4285F4&color=fff&size=32"
-                            alt="Ảnh đại diện"
-                            className="avatar-image"
-                        />
+                    <button className="share-btn" onClick={() => setShowShareModal(true)}>
+                        <Share2 size={20} />
+                        <span>Chia sẻ</span>
                     </button>
+                    <div className="avatar-menu-container" ref={avatarMenuRef}>
+                        <button
+                            className="avatar-btn"
+                            aria-label="Hồ sơ người dùng"
+                            onClick={() => setShowAvatarMenu(!showAvatarMenu)}
+                        >
+                            <img
+                                src="https://ui-avatars.com/api/?name=User&background=4285F4&color=fff&size=32"
+                                alt="Ảnh đại diện"
+                                className="avatar-image"
+                            />
+                        </button>
+                        {showAvatarMenu && (
+                            <div className="avatar-dropdown">
+                                <button className="avatar-dropdown-item">
+                                    <User size={18} />
+                                    <span>Hồ sơ</span>
+                                </button>
+                                <button className="avatar-dropdown-item">
+                                    <LogOut size={18} />
+                                    <span>Đăng xuất</span>
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </header>
 
@@ -305,49 +721,42 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                                     </div>
                                 )}
                                 <div className="message-content">
-                                    <div className="message-text">
-                                        {message.content.split('\n').map((line: string, i: number) => {
-                                            // Handle bold text
-                                            if (line.includes('**')) {
-                                                const parts = line.split('**')
-                                                return (
-                                                    <p key={i}>
-                                                        {parts.map((part: string, j: number) =>
-                                                            j % 2 === 1 ? <strong key={j}>{part}</strong> : part
-                                                        )}
-                                                    </p>
-                                                )
-                                            }
-                                            // Handle headings
-                                            if (line.startsWith('### ')) {
-                                                return <h3 key={i}>{line.replace('### ', '')}</h3>
-                                            }
-                                            if (line.startsWith('#### ')) {
-                                                return <h4 key={i}>{line.replace('#### ', '')}</h4>
-                                            }
-                                            // Handle list items
-                                            if (line.startsWith('- ')) {
-                                                return <li key={i}>{line.replace('- ', '')}</li>
-                                            }
-                                            // Regular paragraph
-                                            if (line.trim()) {
-                                                return <p key={i}>{line}</p>
-                                            }
-                                            return null
-                                        })}
-                                    </div>
+                                    {renderMessageContent(message.content, index)}
                                     {message.type === 'assistant' && (
-                                        <div className="message-actions">
-                                            <button className="action-btn" aria-label="Phản hồi tốt">
-                                                <ThumbsUp size={16} />
-                                            </button>
-                                            <button className="action-btn" aria-label="Phản hồi không tốt">
-                                                <ThumbsDown size={16} />
-                                            </button>
-                                            <button className="action-btn" aria-label="Chia sẻ">
-                                                <Share2 size={16} />
-                                            </button>
-                                        </div>
+                                        <>
+                                            <div className="message-actions-container">
+                                                <div className="message-suggestions">
+                                                    <button className="suggestion-btn">
+                                                        <span className="suggestion-icon">≡</span>
+                                                        <span>Simplify</span>
+                                                    </button>
+                                                    <button className="suggestion-btn">
+                                                        <span className="suggestion-icon">≡</span>
+                                                        <span>Go deeper</span>
+                                                    </button>
+                                                    <button className="suggestion-btn">
+                                                        <span className="suggestion-icon">🖼</span>
+                                                        <span>Get images</span>
+                                                    </button>
+                                                </div>
+                                                <div className="message-actions">
+                                                    <button className="action-btn" aria-label="Phản hồi tốt">
+                                                        <ThumbsUp size={16} />
+                                                    </button>
+                                                    <button className="action-btn" aria-label="Phản hồi không tốt">
+                                                        <ThumbsDown size={16} />
+                                                    </button>
+                                                    <button className="action-btn" aria-label="Chia sẻ">
+                                                        <Share2 size={16} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div className="follow-up-questions">
+                                                <button className="follow-up-btn">Tell me more about classes and objects.</button>
+                                                <button className="follow-up-btn">Explain encapsulation in more detail.</button>
+                                                <button className="follow-up-btn">What are some programming languages that use OOP?</button>
+                                            </div>
+                                        </>
                                     )}
                                 </div>
                             </div>
@@ -356,7 +765,7 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
 
                     {/* Notice */}
                     <div className="chat-notice">
-                        Học về hiện chỉ khả dụng bằng tiếng Việt.
+                        Hannah hiện chỉ khả dụng bằng tiếng Việt.
                     </div>
 
                     {/* Input Area */}
@@ -408,15 +817,29 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                             {studioFeatures.map((feature, index) => {
                                 const IconComponent = feature.icon
                                 return (
-                                    <button
-                                        key={index}
-                                        className="studio-feature-card"
-                                        onClick={() => handleStudioFeatureClick(feature.type, feature.title)}
-                                        title={feature.note}
-                                    >
-                                        <IconComponent size={24} color="#5f6368" />
-                                        <span className="feature-title">{feature.title}</span>
-                                    </button>
+                                    <div key={index} className="studio-feature-card-wrapper">
+                                        <button
+                                            className="studio-feature-card"
+                                            onClick={() => handleStudioFeatureClick(feature.type, feature.title)}
+                                            title={feature.note}
+                                        >
+                                            {feature.type !== 'report' && (
+                                                <button
+                                                    className="studio-feature-edit-btn"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation()
+                                                        setSelectedFeatureType(feature.type)
+                                                        setShowCustomizeModal(true)
+                                                    }}
+                                                    aria-label="Edit feature"
+                                                >
+                                                    <Pencil size={14} />
+                                                </button>
+                                            )}
+                                            <IconComponent size={24} color="#5f6368" />
+                                            <span className="feature-title">{feature.title}</span>
+                                        </button>
+                                    </div>
                                 )
                             })}
                         </div>
@@ -428,7 +851,7 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                                     const IconComponent = getIconForType(item.type)
                                     return (
                                         <div key={item.id} className="studio-item">
-                                            <div 
+                                            <div
                                                 className="studio-item-clickable"
                                                 onClick={() => {
                                                     if (item.status === 'completed') {
@@ -444,7 +867,7 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                                                             setSelectedQuizId(item.id)
                                                             setCurrentQuestionIndex(0)
                                                             setSelectedAnswers({})
-                                                            setShowQuizModal(true)
+                                                            setShowQuizSideModal(true)
                                                         } else if (item.type === 'report') {
                                                             setSelectedReportId(item.id)
                                                             setShowReportModal(true)
@@ -546,8 +969,8 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                         <div className="report-modal-header">
                             <h2 className="report-modal-title">Báo cáo - Tổng quan</h2>
                             <p className="report-modal-subtitle">Dựa trên 1 nguồn</p>
-                            <button 
-                                className="report-modal-close" 
+                            <button
+                                className="report-modal-close"
                                 onClick={() => setShowReportModal(false)}
                                 aria-label="Đóng"
                             >
@@ -559,8 +982,8 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                             <div className="report-section">
                                 <h3 className="report-section-title">Tóm tắt chính</h3>
                                 <p className="report-text">
-                                    Lập trình hướng đối tượng (OOP) là một mô hình lập trình cấu trúc phần mềm xung quanh các đối tượng, 
-                                    thay vì các hàm hoặc logic. Đây là cách mô hình hóa các thực thể trong thế giới thực và các tương tác 
+                                    Lập trình hướng đối tượng (OOP) là một mô hình lập trình cấu trúc phần mềm xung quanh các đối tượng,
+                                    thay vì các hàm hoặc logic. Đây là cách mô hình hóa các thực thể trong thế giới thực và các tương tác
                                     của chúng trong code của bạn.
                                 </p>
                             </div>
@@ -570,8 +993,8 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                                 <div className="report-subsection">
                                     <h4 className="report-subsection-title">1. Chuyển đổi mô hình (Paradigm Shift)</h4>
                                     <p className="report-text">
-                                        OOP đại diện cho một cách suy nghĩ khác về lập trình - tập trung vào dữ liệu và hành vi cùng nhau. 
-                                        Thay vì viết các hàm riêng lẻ xử lý dữ liệu, OOP kết hợp dữ liệu và các phương thức hoạt động 
+                                        OOP đại diện cho một cách suy nghĩ khác về lập trình - tập trung vào dữ liệu và hành vi cùng nhau.
+                                        Thay vì viết các hàm riêng lẻ xử lý dữ liệu, OOP kết hợp dữ liệu và các phương thức hoạt động
                                         trên dữ liệu đó thành các đơn vị độc lập gọi là đối tượng.
                                     </p>
                                 </div>
@@ -579,7 +1002,7 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                                 <div className="report-subsection">
                                     <h4 className="report-subsection-title">2. Mô hình hóa thực tế (Modeling Reality)</h4>
                                     <p className="report-text">
-                                        Các đối tượng phản ánh các thực thể trong thế giới thực, làm cho code trở nên trực quan và dễ bảo trì hơn. 
+                                        Các đối tượng phản ánh các thực thể trong thế giới thực, làm cho code trở nên trực quan và dễ bảo trì hơn.
                                         Ví dụ, một đối tượng "Xe" có thể có thuộc tính như màu sắc, tốc độ và các phương thức như khởi động, dừng.
                                     </p>
                                 </div>
@@ -600,7 +1023,7 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                                 <div className="report-subsection">
                                     <h4 className="report-subsection-title">Objects (Đối tượng)</h4>
                                     <p className="report-text">
-                                        Đối tượng là các thực thể có trạng thái (thuộc tính) và hành vi (phương thức). 
+                                        Đối tượng là các thực thể có trạng thái (thuộc tính) và hành vi (phương thức).
                                         Chúng đại diện cho các khái niệm cụ thể trong chương trình của bạn.
                                     </p>
                                 </div>
@@ -608,7 +1031,7 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                                 <div className="report-subsection">
                                     <h4 className="report-subsection-title">Classes (Lớp)</h4>
                                     <p className="report-text">
-                                        Lớp là bản thiết kế hoặc mẫu để tạo đối tượng. Chúng định nghĩa cấu trúc và hành vi 
+                                        Lớp là bản thiết kế hoặc mẫu để tạo đối tượng. Chúng định nghĩa cấu trúc và hành vi
                                         mà các đối tượng của lớp đó sẽ có.
                                     </p>
                                 </div>
@@ -616,7 +1039,7 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                                 <div className="report-subsection">
                                     <h4 className="report-subsection-title">Instances (Thực thể)</h4>
                                     <p className="report-text">
-                                        Thực thể là các đối tượng cụ thể được tạo ra từ một lớp. Mỗi thực thể có giá trị 
+                                        Thực thể là các đối tượng cụ thể được tạo ra từ một lớp. Mỗi thực thể có giá trị
                                         riêng cho các thuộc tính của nó.
                                     </p>
                                 </div>
@@ -655,8 +1078,8 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                             <div className="report-section">
                                 <h3 className="report-section-title">Kết luận</h3>
                                 <p className="report-text">
-                                    OOP là một mô hình lập trình mạnh mẽ giúp tạo ra code dễ hiểu, dễ bảo trì và có thể mở rộng. 
-                                    Bằng cách tổ chức code xung quanh các đối tượng và áp dụng các nguyên tắc cốt lõi, 
+                                    OOP là một mô hình lập trình mạnh mẽ giúp tạo ra code dễ hiểu, dễ bảo trì và có thể mở rộng.
+                                    Bằng cách tổ chức code xung quanh các đối tượng và áp dụng các nguyên tắc cốt lõi,
                                     lập trình viên có thể xây dựng các hệ thống phần mềm phức tạp một cách hiệu quả hơn.
                                 </p>
                             </div>
@@ -687,8 +1110,8 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                         <div className="mindmap-modal-header">
                             <h2 className="mindmap-modal-title">NỘI DUNG</h2>
                             <p className="mindmap-modal-subtitle">Dựa trên 1 nguồn</p>
-                            <button 
-                                className="mindmap-modal-close" 
+                            <button
+                                className="mindmap-modal-close"
                                 onClick={() => setShowMindmapModal(false)}
                                 aria-label="Đóng"
                             >
@@ -756,8 +1179,8 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                         <div className="notecard-modal-header">
                             <h2 className="notecard-modal-title">Triết học Bộ thể</h2>
                             <p className="notecard-modal-subtitle">Dựa trên 1 nguồn</p>
-                            <button 
-                                className="notecard-modal-close" 
+                            <button
+                                className="notecard-modal-close"
                                 onClick={() => setShowNotecardModal(false)}
                                 aria-label="Đóng"
                             >
@@ -770,7 +1193,7 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                         </div>
 
                         <div className="notecard-container">
-                            <button 
+                            <button
                                 className="notecard-nav-btn notecard-nav-prev"
                                 onClick={() => {
                                     setCurrentCardIndex(prev => Math.max(0, prev - 1))
@@ -781,7 +1204,7 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                                 ←
                             </button>
 
-                            <div 
+                            <div
                                 className={`notecard ${isCardFlipped ? 'flipped' : ''}`}
                                 onClick={() => setIsCardFlipped(!isCardFlipped)}
                             >
@@ -800,7 +1223,7 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                                 </div>
                             </div>
 
-                            <button 
+                            <button
                                 className="notecard-nav-btn notecard-nav-next"
                                 onClick={() => {
                                     setCurrentCardIndex(prev => Math.min(104, prev + 1))
@@ -845,13 +1268,28 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                         <div className="quiz-modal-header">
                             <h2 className="quiz-modal-title">Triết học Trắc nghiệm</h2>
                             <p className="quiz-modal-subtitle">Dựa trên 1 nguồn</p>
-                            <button 
-                                className="quiz-modal-close" 
-                                onClick={() => setShowQuizModal(false)}
-                                aria-label="Đóng"
-                            >
-                                ×
-                            </button>
+                            <div className="quiz-modal-header-actions">
+                                {selectedQuizId && (
+                                    <button
+                                        className="quiz-modal-minimize"
+                                        onClick={() => {
+                                            setShowQuizModal(false)
+                                            setShowQuizSideModal(true)
+                                        }}
+                                        aria-label="Thu nhỏ"
+                                        title="Thu nhỏ"
+                                    >
+                                        <Minimize2 size={20} />
+                                    </button>
+                                )}
+                                {/* <button 
+                                    className="quiz-modal-close" 
+                                    onClick={() => setShowQuizModal(false)}
+                                    aria-label="Đóng"
+                                >
+                                    ×
+                                </button> */}
+                            </div>
                         </div>
 
                         <div className="quiz-progress-bar">
@@ -868,9 +1306,9 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                             </div>
 
                             <div className="quiz-answers">
-                                <button 
+                                <button
                                     className={`quiz-answer-option ${selectedAnswers[currentQuestionIndex] === 'A' ? 'selected' : ''}`}
-                                    onClick={() => setSelectedAnswers({...selectedAnswers, [currentQuestionIndex]: 'A'})}
+                                    onClick={() => setSelectedAnswers({ ...selectedAnswers, [currentQuestionIndex]: 'A' })}
                                 >
                                     <span className="quiz-answer-label">A.</span>
                                     <span className="quiz-answer-text">
@@ -878,9 +1316,9 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                                     </span>
                                 </button>
 
-                                <button 
+                                <button
                                     className={`quiz-answer-option ${selectedAnswers[currentQuestionIndex] === 'B' ? 'selected' : ''}`}
-                                    onClick={() => setSelectedAnswers({...selectedAnswers, [currentQuestionIndex]: 'B'})}
+                                    onClick={() => setSelectedAnswers({ ...selectedAnswers, [currentQuestionIndex]: 'B' })}
                                 >
                                     <span className="quiz-answer-label">B.</span>
                                     <span className="quiz-answer-text">
@@ -888,9 +1326,9 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                                     </span>
                                 </button>
 
-                                <button 
+                                <button
                                     className={`quiz-answer-option ${selectedAnswers[currentQuestionIndex] === 'C' ? 'selected' : ''}`}
-                                    onClick={() => setSelectedAnswers({...selectedAnswers, [currentQuestionIndex]: 'C'})}
+                                    onClick={() => setSelectedAnswers({ ...selectedAnswers, [currentQuestionIndex]: 'C' })}
                                 >
                                     <span className="quiz-answer-label">C.</span>
                                     <span className="quiz-answer-text">
@@ -898,9 +1336,9 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                                     </span>
                                 </button>
 
-                                <button 
+                                <button
                                     className={`quiz-answer-option ${selectedAnswers[currentQuestionIndex] === 'D' ? 'selected' : ''}`}
-                                    onClick={() => setSelectedAnswers({...selectedAnswers, [currentQuestionIndex]: 'D'})}
+                                    onClick={() => setSelectedAnswers({ ...selectedAnswers, [currentQuestionIndex]: 'D' })}
                                 >
                                     <span className="quiz-answer-label">D.</span>
                                     <span className="quiz-answer-text">
@@ -911,7 +1349,7 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                         </div>
 
                         <div className="quiz-navigation">
-                            <button 
+                            <button
                                 className="quiz-nav-btn quiz-hint-btn"
                                 onClick={() => {
                                     // Toggle hint functionality
@@ -919,7 +1357,7 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                             >
                                 Gợi ý
                             </button>
-                            <button 
+                            <button
                                 className="quiz-nav-btn quiz-next-btn"
                                 onClick={() => {
                                     if (currentQuestionIndex < 14) {
@@ -945,6 +1383,445 @@ Các đối tượng phản ánh các thực thể trong thế giới thực, l�
                         {/* <p className="quiz-modal-notice">
                             Notebook.M có thể đưa ra thông tin không chính xác; hãy kiểm tra kỹ câu trả lời mà bạn nhận được
                         </p> */}
+                    </div>
+                </div>
+            )}
+
+            {/* Quiz Side Modal - Positioned next to sidebar */}
+            {showQuizSideModal && (
+                <div className="quiz-side-modal-overlay">
+                    <div className="quiz-side-modal-content">
+                        <div className="quiz-side-modal-header">
+                            <h2 className="quiz-side-modal-title">Bài kiểm tra</h2>
+                            <div className="quiz-side-modal-actions">
+                                <button
+                                    className="quiz-side-expand-btn"
+                                    onClick={() => {
+                                        setShowQuizSideModal(false)
+                                        setShowQuizModal(true)
+                                    }}
+                                    aria-label="Mở rộng"
+                                >
+                                    <Maximize2 size={18} />
+                                </button>
+                                <button
+                                    className="quiz-side-modal-close"
+                                    onClick={() => setShowQuizSideModal(false)}
+                                    aria-label="Đóng"
+                                >
+                                    ×
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="quiz-side-progress-bar">
+                            <div className="quiz-side-progress-text">
+                                Câu {currentQuestionIndex + 1} / 15
+                            </div>
+                        </div>
+
+                        <div className="quiz-side-container">
+                            <div className="quiz-side-question">
+                                <p className="quiz-side-question-text">
+                                    CÂU HỎI?
+                                </p>
+                            </div>
+
+                            <div className="quiz-side-answers">
+                                <button
+                                    className={`quiz-side-answer-option ${selectedAnswers[currentQuestionIndex] === 'A' ? 'selected' : ''}`}
+                                    onClick={() => setSelectedAnswers({ ...selectedAnswers, [currentQuestionIndex]: 'A' })}
+                                >
+                                    <span className="quiz-side-answer-label">A.</span>
+                                    <span className="quiz-side-answer-text">
+                                        TRẢ LỜI.
+                                    </span>
+                                </button>
+
+                                <button
+                                    className={`quiz-side-answer-option ${selectedAnswers[currentQuestionIndex] === 'B' ? 'selected' : ''}`}
+                                    onClick={() => setSelectedAnswers({ ...selectedAnswers, [currentQuestionIndex]: 'B' })}
+                                >
+                                    <span className="quiz-side-answer-label">B.</span>
+                                    <span className="quiz-side-answer-text">
+                                        TRẢ LỜI.
+                                    </span>
+                                </button>
+
+                                <button
+                                    className={`quiz-side-answer-option ${selectedAnswers[currentQuestionIndex] === 'C' ? 'selected' : ''}`}
+                                    onClick={() => setSelectedAnswers({ ...selectedAnswers, [currentQuestionIndex]: 'C' })}
+                                >
+                                    <span className="quiz-side-answer-label">C.</span>
+                                    <span className="quiz-side-answer-text">
+                                        TRẢ LỜI.
+                                    </span>
+                                </button>
+
+                                <button
+                                    className={`quiz-side-answer-option ${selectedAnswers[currentQuestionIndex] === 'D' ? 'selected' : ''}`}
+                                    onClick={() => setSelectedAnswers({ ...selectedAnswers, [currentQuestionIndex]: 'D' })}
+                                >
+                                    <span className="quiz-side-answer-label">D.</span>
+                                    <span className="quiz-side-answer-text">
+                                        TRẢ LỜI.
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="quiz-side-navigation">
+                            <button
+                                className="quiz-side-nav-btn quiz-side-hint-btn"
+                                onClick={() => {
+                                    // Toggle hint functionality
+                                }}
+                            >
+                                Gợi ý
+                            </button>
+                            <button
+                                className="quiz-side-nav-btn quiz-side-next-btn"
+                                onClick={() => {
+                                    if (currentQuestionIndex < 14) {
+                                        setCurrentQuestionIndex(prev => prev + 1)
+                                    }
+                                }}
+                            >
+                                Tiếp theo
+                            </button>
+                        </div>
+
+                        <div className="quiz-side-modal-footer">
+                            <button className="quiz-side-feedback-btn">
+                                <ThumbsUp size={18} />
+                                Hữu ích
+                            </button>
+                            <button className="quiz-side-feedback-btn">
+                                <ThumbsDown size={18} />
+                                Không phù hợp
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Customize Feature Modal */}
+            {showCustomizeModal && (
+                <div className="modal-overlay" onClick={() => setShowCustomizeModal(false)}>
+                    <div className="customize-modal-content" style={{ maxWidth: '1000px' }} onClick={(e) => e.stopPropagation()}>
+                        <div className="customize-modal-header">
+                            <div className="customize-modal-title-wrapper">
+                                <ClipboardCheck size={24} color="#5f6368" />
+                                <h3 className="customize-modal-title">Tùy chỉnh thẻ thông tin</h3>
+                            </div>
+                            <button
+                                className="customize-modal-close"
+                                onClick={() => setShowCustomizeModal(false)}
+                                aria-label="Đóng"
+                            >
+                                ×
+                            </button>
+                        </div>
+
+                        {/* Tabs */}
+                        <div className="customize-tabs">
+                            <button
+                                className={`customize-tab ${customizeTab === 'conversation' ? 'active' : ''}`}
+                                onClick={() => setCustomizeTab('conversation')}
+                            >
+                                Theo nội dung cuộc trò chuyện
+                            </button>
+                            <button
+                                className={`customize-tab ${customizeTab === 'course' ? 'active' : ''}`}
+                                onClick={() => setCustomizeTab('course')}
+                            >
+                                Theo mã môn học
+                            </button>
+                        </div>
+
+                        <div className="customize-modal-body">
+                            {customizeTab === 'conversation' ? (
+                                <>
+                                    {/* Số lượng thẻ */}
+                                    <div className="customize-section">
+                                        <h4 className="customize-section-title">Số lượng thẻ</h4>
+                                        <div className="customize-options" style={{ maxWidth: '50%' }}>
+                                            <button
+                                                className={`customize-option-btn ${cardQuantity === 3 ? 'selected' : ''}`}
+                                                onClick={() => setCardQuantity(3)}
+                                            >
+                                                Ít hơn
+                                            </button>
+                                            <button
+                                                className={`customize-option-btn ${cardQuantity === 6 ? 'selected' : ''}`}
+                                                onClick={() => setCardQuantity(6)}
+                                            >
+                                                Tiêu chuẩn
+                                            </button>
+                                            <button
+                                                className={`customize-option-btn ${cardQuantity === 9 ? 'selected' : ''}`}
+                                                onClick={() => setCardQuantity(9)}
+                                            >
+                                                Nhiều hơn
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Chủ đề nên là gì */}
+                                    <div className="customize-section">
+                                        <h4 className="customize-section-title">Mô tả</h4>
+                                        <textarea
+                                            className="customize-textarea"
+                                            style={{ maxWidth: '98%' }}
+                                            placeholder="Mô tả ngắn gọn về chủ đề"
+                                            value={cardTopic}
+                                            onChange={(e) => setCardTopic(e.target.value)}
+                                            rows={6}
+                                        />
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    {/* Số lượng thẻ và Mã môn học trên cùng một hàng */}
+                                    <div className="customize-row">
+                                        {/* Số lượng thẻ */}
+                                        <div className="customize-section">
+                                            <h4 className="customize-section-title">Số lượng thẻ</h4>
+                                            <div className="customize-options">
+                                                <button
+                                                    className={`customize-option-btn ${cardQuantity === 3 ? 'selected' : ''}`}
+                                                    onClick={() => setCardQuantity(3)}
+                                                >
+                                                    Ít hơn
+                                                </button>
+                                                <button
+                                                    className={`customize-option-btn ${cardQuantity === 6 ? 'selected' : ''}`}
+                                                    onClick={() => setCardQuantity(6)}
+                                                >
+                                                    Tiêu chuẩn
+                                                </button>
+                                                <button
+                                                    className={`customize-option-btn ${cardQuantity === 9 ? 'selected' : ''}`}
+                                                    onClick={() => setCardQuantity(9)}
+                                                >
+                                                    Nhiều hơn
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {/* Mã môn học */}
+                                        <div className="customize-section">
+                                            <h4 className="customize-section-title">Chọn mã môn học</h4>
+                                            <div className="course-code-dropdown">
+                                                <input
+                                                    type="text"
+                                                    className="course-code-search"
+                                                    placeholder="Tìm kiếm mã môn học (VD: CSD, PRO, CSI...)"
+                                                    value={courseSearchQuery}
+                                                    onChange={(e) => {
+                                                        setCourseSearchQuery(e.target.value)
+                                                        setShowCourseDropdown(true)
+                                                    }}
+                                                    onFocus={() => setShowCourseDropdown(true)}
+                                                />
+                                                {courseSearchQuery && showCourseDropdown && (
+                                                    <div className="course-code-options">
+                                                        {courseCodes
+                                                            .filter(course =>
+                                                                course.code.toLowerCase().includes(courseSearchQuery.toLowerCase()) ||
+                                                                course.name.toLowerCase().includes(courseSearchQuery.toLowerCase())
+                                                            )
+                                                            .map(course => (
+                                                                <button
+                                                                    key={course.code}
+                                                                    className="course-code-option"
+                                                                    onClick={() => {
+                                                                        setSelectedCourseCode(course.code)
+                                                                        setCourseSearchQuery(`${course.code} - ${course.name}`)
+                                                                        setShowCourseDropdown(false)
+                                                                    }}
+                                                                >
+                                                                    <span className="course-code">{course.code}</span>
+                                                                    <span className="course-name">{course.name}</span>
+                                                                </button>
+                                                            ))
+                                                        }
+                                                        {courseCodes.filter(course =>
+                                                            course.code.toLowerCase().includes(courseSearchQuery.toLowerCase()) ||
+                                                            course.name.toLowerCase().includes(courseSearchQuery.toLowerCase())
+                                                        ).length === 0 && (
+                                                                <div className="course-code-no-results">
+                                                                    Không tìm thấy mã môn học
+                                                                </div>
+                                                            )}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Mô tả */}
+                                    <div className="customize-section">
+                                        <h4 className="customize-section-title">Mô tả</h4>
+                                        <textarea
+                                            className="customize-textarea"
+                                            style={{ maxWidth: '98%' }}
+                                            placeholder="Mô tả ngắn gọn về chủ đề"
+                                            value={cardTopic}
+                                            onChange={(e) => setCardTopic(e.target.value)}
+                                            rows={6}
+                                        />
+                                    </div>
+                                </>
+                            )}
+                        </div>
+
+                        <div className="customize-modal-footer">
+                            <button
+                                className="customize-create-btn"
+                                onClick={handleCustomizeSubmit}
+                            >
+                                Tạo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Share Modal */}
+            {showShareModal && (
+                <div className="modal-overlay" onClick={() => setShowShareModal(false)}>
+                    <div className="share-modal-content" onClick={(e) => e.stopPropagation()} ref={shareModalRef}>
+                        <div className="share-modal-header">
+                            <div className="share-modal-title-section">
+                                <Share2 size={20} color="#5f6368" />
+                                <h3 className="share-modal-title">Chia sẻ cuộc trò chuyện</h3>
+                            </div>
+                            <button 
+                                className="share-modal-close" 
+                                onClick={() => setShowShareModal(false)}
+                                aria-label="Đóng"
+                            >
+                                ×
+                            </button>
+                        </div>
+
+                        <div className="share-modal-body">
+                            {/* Add people input */}
+                            <div className="share-input-section">
+                                <input
+                                    type="email"
+                                    className="share-email-input"
+                                    placeholder="Thêm người dùng và nhóm*"
+                                    value={shareEmail}
+                                    onChange={(e) => setShareEmail(e.target.value)}
+                                />
+                            </div>
+
+                            {/* People with access */}
+                            <div className="share-access-section">
+                                <h4 className="share-section-title">Người có quyền truy cập</h4>
+                                <div className="share-user-item">
+                                    <div className="share-user-avatar">
+                                        <img 
+                                            src="https://ui-avatars.com/api/?name=Duc+Phan&background=4285F4&color=fff&size=40" 
+                                            alt="Đức Phan"
+                                        />
+                                    </div>
+                                    <div className="share-user-info">
+                                        <div className="share-user-name">Đức Phan</div>
+                                        <div className="share-user-email">phanminhduc23@gmail...</div>
+                                    </div>
+                                    <div className="share-user-role">
+                                        <select className="share-role-select" disabled>
+                                            <option value="owner">Chủ sở hữu</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* General access */}
+                            <div className="share-general-section">
+                                <h4 className="share-section-title">Quyền truy cập chung</h4>
+                                <div className="share-access-control" ref={accessDropdownRef}>
+                                    <div className="share-access-icon">
+                                        {generalAccess === 'restricted' ? '🔒' : '🌐'}
+                                    </div>
+                                    <div className="share-access-info">
+                                        <div className="share-access-title">
+                                            {generalAccess === 'restricted' ? 'Bị hạn chế' : 'Bất kỳ ai có đường liên kết'}
+                                        </div>
+                                        <div className="share-access-description">
+                                            {generalAccess === 'restricted' 
+                                                ? 'Chỉ những người có quyền truy cập mới có thể mở bằng đường liên kết này'
+                                                : 'Bất kỳ ai có đường liên kết đều có thể xem'
+                                            }
+                                        </div>
+                                    </div>
+                                    <button 
+                                        className="share-access-dropdown"
+                                        onClick={() => setShowAccessDropdown(!showAccessDropdown)}
+                                    >
+                                        <ChevronDown size={20} />
+                                    </button>
+                                    
+                                    {/* Access Dropdown Menu */}
+                                    {showAccessDropdown && (
+                                        <div className="share-access-dropdown-menu">
+                                            <button 
+                                                className={`share-access-option ${generalAccess === 'restricted' ? 'active' : ''}`}
+                                                onClick={() => {
+                                                    setGeneralAccess('restricted')
+                                                    setShowAccessDropdown(false)
+                                                }}
+                                            >
+                                                <div className="share-access-option-icon">🔒</div>
+                                                <div className="share-access-option-info">
+                                                    <div className="share-access-option-title">Bị hạn chế</div>
+                                                    <div className="share-access-option-desc">
+                                                        Chỉ những người được thêm mới có quyền truy cập
+                                                    </div>
+                                                </div>
+                                                {generalAccess === 'restricted' && (
+                                                    <div className="share-access-option-check">✓</div>
+                                                )}
+                                            </button>
+                                            <button 
+                                                className={`share-access-option ${generalAccess === 'anyone' ? 'active' : ''}`}
+                                                onClick={() => {
+                                                    setGeneralAccess('anyone')
+                                                    setShowAccessDropdown(false)
+                                                }}
+                                            >
+                                                <div className="share-access-option-icon">🌐</div>
+                                                <div className="share-access-option-info">
+                                                    <div className="share-access-option-title">Bất kỳ ai có đường liên kết</div>
+                                                    <div className="share-access-option-desc">
+                                                        Bất kỳ ai có đường liên kết đều có thể xem
+                                                    </div>
+                                                </div>
+                                                {generalAccess === 'anyone' && (
+                                                    <div className="share-access-option-check">✓</div>
+                                                )}
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="share-modal-footer">
+                            <button className="share-copy-link-btn" onClick={handleCopyLink}>
+                                <LinkIcon size={18} />
+                                Sao chép đường liên kết
+                            </button>
+                            <button 
+                                className="share-done-btn"
+                                onClick={() => setShowShareModal(false)}
+                            >
+                                Lưu
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
