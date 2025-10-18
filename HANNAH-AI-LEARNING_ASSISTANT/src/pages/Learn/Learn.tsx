@@ -33,10 +33,10 @@ export default function Learn() {
                     </div>
                 </div>
                 <div className="learn-header-right">
-                    <button className="avatar-btn" aria-label="User profile">
+                    <button className="avatar-btn" aria-label="Hồ sơ người dùng">
                         <img
                             src="https://ui-avatars.com/api/?name=User&background=4285F4&color=fff&size=32"
-                            alt="User avatar"
+                            alt="Ảnh đại diện"
                             className="avatar-image"
                         />
                     </button>
@@ -46,14 +46,14 @@ export default function Learn() {
             {/* Main Content */}
             <main className="learn-main">
                 <div className="learn-content">
-                    <h1 className="learn-title">What would you like to learn about?</h1>
+                    <h1 className="learn-title">Bạn muốn học về điều gì?</h1>
                     
                     {/* Search Box */}
                     <div className="learn-search-container">
                         <div className="learn-search-box">
                             <input
                                 type="text"
-                                placeholder="Ask Learn About"
+                                placeholder="Hỏi về chủ đề bạn muốn học"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onKeyPress={handleKeyPress}
@@ -61,7 +61,7 @@ export default function Learn() {
                             />
                             <button 
                                 className={`upload-btn ${searchQuery.trim() ? 'has-content' : ''}`}
-                                aria-label={searchQuery.trim() ? 'Send' : 'Upload'}
+                                aria-label={searchQuery.trim() ? 'Gửi' : 'Tải lên'}
                                 onClick={searchQuery.trim() ? handleSearch : undefined}
                             >
                                 {searchQuery.trim() ? (
@@ -94,9 +94,9 @@ export default function Learn() {
                                 </svg>
                             </div>
                             <div className="pdf-companion-content">
-                                <h3 className="pdf-companion-title">PDF Reading Companion</h3>
+                                <h3 className="pdf-companion-title">Trợ lý Đọc PDF</h3>
                                 <p className="pdf-companion-description">
-                                    Upload a PDF or type the URL to use a new reading tool that helps analysis and guide you through your questions and concepts.
+                                    Tải lên PDF hoặc nhập URL để sử dụng công cụ đọc mới giúp phân tích và hướng dẫn bạn qua các câu hỏi và khái niệm.
                                 </p>
                             </div>
                         </div>
@@ -107,8 +107,8 @@ export default function Learn() {
             {/* Footer Section */}
             <footer className="learn-footer">
                 <div className="reading-nook-section">
-                    <h2 className="reading-nook-title">The Reading Nook</h2>
-                    <p className="reading-nook-subtitle">Some PDFs to try out</p>
+                    <h2 className="reading-nook-title">Thư viện Tài liệu</h2>
+                    <p className="reading-nook-subtitle">Một số PDF để thử nghiệm</p>
                     
                     <div className="pdf-cards-grid">
                         {/* PDF Card 1 */}
@@ -116,7 +116,7 @@ export default function Learn() {
                             <div className="pdf-card-icon">
                                 <FileText size={40} color="#DC2626" />
                             </div>
-                            <h4 className="pdf-card-title">React Documentation</h4>
+                            <h4 className="pdf-card-title">Tài liệu React</h4>
                             <p className="pdf-card-description">Học về React hooks và components</p>
                         </div>
 
@@ -125,7 +125,7 @@ export default function Learn() {
                             <div className="pdf-card-icon">
                                 <Book size={40} color="#2563EB" />
                             </div>
-                            <h4 className="pdf-card-title">TypeScript Handbook</h4>
+                            <h4 className="pdf-card-title">Sổ tay TypeScript</h4>
                             <p className="pdf-card-description">Tìm hiểu về TypeScript types</p>
                         </div>
 
@@ -134,7 +134,7 @@ export default function Learn() {
                             <div className="pdf-card-icon">
                                 <Server size={40} color="#059669" />
                             </div>
-                            <h4 className="pdf-card-title">Node.js Guide</h4>
+                            <h4 className="pdf-card-title">Hướng dẫn Node.js</h4>
                             <p className="pdf-card-description">Backend development với Node.js</p>
                         </div>
 
@@ -143,7 +143,7 @@ export default function Learn() {
                             <div className="pdf-card-icon">
                                 <Database size={40} color="#7C3AED" />
                             </div>
-                            <h4 className="pdf-card-title">Database Design</h4>
+                            <h4 className="pdf-card-title">Thiết kế Cơ sở dữ liệu</h4>
                             <p className="pdf-card-description">SQL và NoSQL databases</p>
                         </div>
                     </div>
