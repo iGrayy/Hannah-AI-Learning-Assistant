@@ -1,0 +1,21 @@
+.faculty-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8fafc;
+}
+
+.faculty-content {
+  flex: 1;
+  padding: 24px;
+  margin-left: 260px; /* Width of sidebar */
+  transition: margin-left 0.3s ease;
+  background: #f8fafc;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .faculty-content {
+    margin-left: 0;
+    padding: 16px;
+  }
+}
