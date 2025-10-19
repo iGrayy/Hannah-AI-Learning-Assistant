@@ -29,14 +29,14 @@ const Sidebar: React.FC = () => {
     {
       path: '/faculty/conversations',
     //   icon: <Flag size={20} />,
-      label: 'Hội thoại gắn cờ',
+      label: 'Giám sát hội thoại',
       badge: flaggedConversationsCount > 0 ? flaggedConversationsCount : null,
       description: 'Các hội thoại cần xem xét'
     },
     {
       path: '/faculty/materials',
     //   icon: <BookOpen size={20} />,
-      label: 'Tài liệu học tập',
+      label: 'Quản lý tài liệu',
       badge: null,
       description: 'Quản lý tài liệu và bài giảng'
     },

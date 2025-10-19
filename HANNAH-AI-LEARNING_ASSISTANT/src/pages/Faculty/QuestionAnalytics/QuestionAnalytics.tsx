@@ -71,7 +71,7 @@ const QuestionAnalytics = () => {
     <div className="question-analytics" style={{ padding: '24px', background: '#f5f7fa' }}>
       {/* Header Section */}
       <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-800 mb-2">Question Analytics</h1>
+          <h1 className="text-4xl font-bold text-slate-800 mb-2">Thống kê câu hỏi</h1>
           <p className="text-slate-600">Phân tích và theo dõi các câu hỏi của sinh viên</p>
         </div>
 

@@ -157,7 +157,7 @@ export default function ConversationMonitoring() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-purple-50 p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-800 mb-2">Conversation Monitoring</h1>
+          <h1 className="text-4xl font-bold text-slate-800 mb-2">Giám sát hội thoại</h1>
           <p className="text-slate-600">Theo dõi và kiểm tra chất lượng tương tác AI với sinh viên</p>
         </div>
 
