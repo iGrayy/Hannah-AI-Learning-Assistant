@@ -155,22 +155,22 @@ export default function CourseRoadmapManagement() {
                 <div>
                   <h1 className="course-title">
                     <Map size={32} />
-                    Course Roadmap Management
+                    Quản lý Lộ trình Môn học
                   </h1>
-                  <p className="course-subtitle">Create and manage learning paths by specialty and semester</p>
+                  <p className="course-subtitle">Tạo và quản lý lộ trình học tập theo chuyên ngành và học kỳ</p>
                 </div>
                 <div className="course-actions">
                   <button className="btn-import">
                     <Upload size={16} />
-                    Import
+                    Nhập
                   </button>
                   <button className="btn-export">
                     <Download size={16} />
-                    Export
+                    Xuất
                   </button>
                   <button onClick={handleCreateRoadmap} className="btn-create-course">
                     <Plus size={20} />
-                    Create New Course
+                    Tạo Môn học Mới
                   </button>
                 </div>
               </div>
@@ -182,7 +182,7 @@ export default function CourseRoadmapManagement() {
                     <Search className="search-icon" size={20} />
                     <input
                       type="text"
-                      placeholder="Search courses..."
+                      placeholder="Tìm kiếm môn học..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="search-input"
@@ -194,7 +194,7 @@ export default function CourseRoadmapManagement() {
                     onChange={(e) => setSelectedSpecialty(e.target.value)}
                     className="filter-select"
                   >
-                    <option value="all">All Specialties</option>
+                    <option value="all">Tất cả Chuyên ngành</option>
                     {specialties.map(spec => (
                       <option key={spec.value} value={spec.value}>{spec.label}</option>
                     ))}
@@ -205,15 +205,15 @@ export default function CourseRoadmapManagement() {
                     onChange={(e) => setSelectedSemester(e.target.value)}
                     className="filter-select"
                   >
-                    <option value="all">All Semesters</option>
+                    <option value="all">Tất cả Học kỳ</option>
                     {[1,2,3,4,5,6,7,8,9].map(sem => (
-                      <option key={sem} value={sem}>Semester {sem}</option>
+                      <option key={sem} value={sem}>Học kỳ {sem}</option>
                     ))}
                   </select>
 
                   <button className="btn-more-filters">
                     <Filter size={16} />
-                    More Filters
+                    Bộ lọc khác
                   </button>
                 </div>
               </div>
@@ -267,7 +267,7 @@ export default function CourseRoadmapManagement() {
                         {roadmap.specialty}
                       </span>
                       <span className="semester-badge">
-                        Sem {roadmap.semester}
+                        HK {roadmap.semester}
                       </span>
                     </div>
 
@@ -276,7 +276,7 @@ export default function CourseRoadmapManagement() {
 
                     {/* Learning Outcomes */}
                     <div className="course-section">
-                      <h4 className="course-section-title">Learning Outcomes:</h4>
+                      <h4 className="course-section-title">Kết quả Học tập:</h4>
                       <div className="tags-wrapper">
                         {roadmap.learningOutcomes.map((outcome, idx) => (
                           <span key={idx} className="tag tag-outcome">
@@ -288,7 +288,7 @@ export default function CourseRoadmapManagement() {
 
                     {/* Common Challenges */}
                     <div className="course-section">
-                      <h4 className="course-section-title">Common Challenges:</h4>
+                      <h4 className="course-section-title">Thách thức Thường gặp:</h4>
                       <div className="tags-wrapper">
                         {roadmap.challenges.map((challenge, idx) => (
                           <span key={idx} className="tag tag-challenge">
@@ -302,7 +302,7 @@ export default function CourseRoadmapManagement() {
                     <div className="course-footer">
                       <div className="course-footer-item">
                         <Clock size={16} />
-                        Updated: {roadmap.lastUpdated}
+                        Cập nhật: {roadmap.lastUpdated}
                       </div>
                     </div>
                   </div>
@@ -313,8 +313,8 @@ export default function CourseRoadmapManagement() {
             {filteredRoadmaps.length === 0 && (
               <div className="empty-state">
                 <Map className="empty-icon" size={64} />
-                <p className="empty-title">No courses found</p>
-                <p className="empty-description">Try adjusting your filters or create a new course</p>
+                <p className="empty-title">Không tìm thấy môn học</p>
+                <p className="empty-description">Thử điều chỉnh bộ lọc hoặc tạo môn học mới</p>
               </div>
             )}
           </>
@@ -328,13 +328,13 @@ export default function CourseRoadmapManagement() {
               <div>
                 <h1 className="create-title">
                   <Map size={32} />
-                  {view === 'create' ? 'Create New Course' : 'Edit Course'}
+                  {view === 'create' ? 'Tạo Môn học Mới' : 'Chỉnh sửa Môn học'}
                 </h1>
-                <p className="create-subtitle">Define course information and learning outcomes</p>
+                <p className="create-subtitle">Định nghĩa thông tin môn học và kết quả học tập</p>
               </div>
               <button onClick={() => setView('list')} className="btn-cancel">
                 <X size={16} />
-                Cancel
+                Hủy
               </button>
             </div>
 
@@ -343,21 +343,21 @@ export default function CourseRoadmapManagement() {
               <div className="create-main">
                 {/* Basic Information */}
                 <div className="form-section">
-                  <h3 className="form-section-title">Course Information</h3>
+                  <h3 className="form-section-title">Thông tin Môn học</h3>
                   
                   <div className="form-content">
                     <div className="form-row">
                       <div className="form-group">
-                        <label className="form-label">Course Code *</label>
+                        <label className="form-label">Mã Môn học *</label>
                         <input
                           type="text"
-                          placeholder="e.g., PRF192"
+                          placeholder="VD: PRF192"
                           className="form-input"
                         />
                       </div>
 
                       <div className="form-group">
-                        <label className="form-label">Specialty *</label>
+                        <label className="form-label">Chuyên ngành *</label>
                         <select
                           value={specialty}
                           onChange={(e) => setSpecialty(e.target.value)}
@@ -371,19 +371,19 @@ export default function CourseRoadmapManagement() {
                     </div>
 
                     <div className="form-group">
-                      <label className="form-label">Course Name *</label>
+                      <label className="form-label">Tên Môn học *</label>
                       <input
                         type="text"
                         value={roadmapName}
                         onChange={(e) => setRoadmapName(e.target.value)}
-                        placeholder="e.g., Introduction to Programming"
+                        placeholder="VD: Nhập môn Lập trình"
                         className="form-input"
                         style={{width: '92%'}}
                       />
                     </div>
 
                     <div className="form-group">
-                      <label className="form-label">Semester *</label>
+                      <label className="form-label">Học kỳ *</label>
                       <select
                         value={semester}
                         onChange={(e) => setSemester(parseInt(e.target.value))}
@@ -391,18 +391,18 @@ export default function CourseRoadmapManagement() {
                         style={{width: '95%'}}
                       >
                         {[1,2,3,4,5,6,7,8,9].map(sem => (
-                          <option key={sem} value={sem}>Semester {sem}</option>
+                          <option key={sem} value={sem}>Học kỳ {sem}</option>
                         ))}
                       </select>
                     </div>
 
                     <div className="form-group">
-                      <label className="form-label">Description</label>
+                      <label className="form-label">Mô tả</label>
                       <textarea
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         rows={3}
-                        placeholder="Brief description of the course..."
+                        placeholder="Mô tả ngắn gọn về môn học..."
                         className="form-textarea"
                         style={{width: '92%'}}
                       />
@@ -412,13 +412,13 @@ export default function CourseRoadmapManagement() {
 
                 {/* Learning Outcomes */}
                 <div className="form-section">
-                  <h3 className="form-section-title">Learning Outcomes</h3>
-                  
+                  <h3 className="form-section-title">Kết quả Học tập</h3>
+
                   <div className="form-content">
                     <div className="input-with-button">
                       <input
                         type="text"
-                        placeholder="Add learning outcome..."
+                        placeholder="Thêm kết quả học tập..."
                         className="form-input"
                       />
                       <button className="btn-add">
@@ -441,13 +441,13 @@ export default function CourseRoadmapManagement() {
 
                 {/* Common Challenges */}
                 <div className="form-section">
-                  <h3 className="form-section-title">Common Challenges</h3>
-                  
+                  <h3 className="form-section-title">Thách thức Thường gặp</h3>
+
                   <div className="form-content">
                     <div className="input-with-button">
                       <input
                         type="text"
-                        placeholder="Add common challenge..."
+                        placeholder="Thêm thách thức thường gặp..."
                         className="form-input"
                       />
                       <button className="btn-add-challenge">
@@ -472,34 +472,34 @@ export default function CourseRoadmapManagement() {
               {/* Right Sidebar - Preview */}
               <div className="create-sidebar">
                 <div className="preview-card">
-                  <h3 className="preview-title">Preview</h3>
-                  
+                  <h3 className="preview-title">Xem trước</h3>
+
                   <div className="preview-content">
                     <div className="preview-item">
-                      <label className="preview-label">Course Code</label>
+                      <label className="preview-label">Mã Môn học</label>
                       <p className="preview-value">PRF192</p>
                     </div>
 
                     <div className="preview-item">
-                      <label className="preview-label">Specialty</label>
+                      <label className="preview-label">Chuyên ngành</label>
                       <span className="preview-badge">
                         {specialty}
                       </span>
                     </div>
 
                     <div className="preview-item">
-                      <label className="preview-label">Semester</label>
-                      <p className="preview-value">Semester {semester}</p>
+                      <label className="preview-label">Học kỳ</label>
+                      <p className="preview-value">Học kỳ {semester}</p>
                     </div>
 
                     <div className="preview-item">
-                      <label className="preview-label">Status</label>
-                      <p className="preview-value">Draft</p>
+                      <label className="preview-label">Trạng thái</label>
+                      <p className="preview-value">Bản nháp</p>
                     </div>
 
                     <div className="preview-footer">
                       <p className="preview-note">
-                        This is how your course will appear in the list view
+                        Đây là cách môn học của bạn sẽ xuất hiện trong danh sách
                       </p>
                     </div>
                   </div>
@@ -511,13 +511,13 @@ export default function CourseRoadmapManagement() {
             <div className="action-buttons">
               <button onClick={handleSaveRoadmap} className="btn-save">
                 <Save size={20} />
-                Save Course
+                Lưu Môn học
               </button>
               <button className="btn-publish">
-                Publish
+                Xuất bản
               </button>
               <button className="btn-draft">
-                Save as Draft
+                Lưu Bản nháp
               </button>
             </div>
           </div>

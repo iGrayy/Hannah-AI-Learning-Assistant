@@ -42,7 +42,7 @@ export default function SystemSettings() {
   ];
 
   const sections = [
-    { id: 'general', label: 'General', icon: Settings },
+    { id: 'general', label: 'Tổng quan', icon: Settings },
   ];
 
   const handleSave = () => {
@@ -76,7 +76,7 @@ export default function SystemSettings() {
             {saved && (
               <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3 animate-pulse">
                 <CheckCircle className="w-5 h-5 text-green-600" />
-                <span className="text-green-700 font-medium">Settings saved successfully!</span>
+                <span className="text-green-700 font-medium">Cài đặt đã được lưu thành công!</span>
               </div>
             )}
 
@@ -84,20 +84,20 @@ export default function SystemSettings() {
             {activeSection === 'general' && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-2xl font-bold text-slate-800 mb-2">General Settings</h3>
-                  <p className="text-slate-600">Configure basic system preferences</p>
+                  <h3 className="text-2xl font-bold text-slate-800 mb-2">Cài đặt Tổng quan</h3>
+                  <p className="text-slate-600">Cấu hình các tùy chọn cơ bản của hệ thống</p>
                 </div>
 
                 {/* Timezone & Session Card */}
                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
                   <div className="flex items-center gap-3 pb-4 border-b border-slate-200">
                     <Globe className="w-5 h-5 text-blue-600" />
-                    <h4 className="font-semibold text-slate-800">Timezone & Session</h4>
+                    <h4 className="font-semibold text-slate-800">Múi giờ & Phiên làm việc</h4>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
-                      Default Timezone
+                      Múi giờ mặc định
                     </label>
                     <select 
                       value={timezone}
@@ -109,13 +109,13 @@ export default function SystemSettings() {
                       ))}
                     </select>
                     <p className="text-xs text-slate-500 mt-2">
-                      Current: {new Date().toLocaleString('en-US', { timeZone: timezone })}
+                      Hiện tại: {new Date().toLocaleString('vi-VN', { timeZone: timezone })}
                     </p>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
-                      Session Timeout
+                      Thời gian hết phiên
                     </label>
                     <div className="flex items-center gap-4">
                       <input 
@@ -136,7 +136,7 @@ export default function SystemSettings() {
 
                   <div className="space-y-3">
                     <label className="flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer transition">
-                      <span className="text-sm font-medium text-slate-700">Auto Logout on Inactivity</span>
+                      <span className="text-sm font-medium text-slate-700">Tự động đăng xuất khi không hoạt động</span>
                       <input
                         type="checkbox"
                         checked={autoLogout}
@@ -146,7 +146,7 @@ export default function SystemSettings() {
                     </label>
 
                     <label className="flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer transition">
-                      <span className="text-sm font-medium text-slate-700">Allow "Remember Me"</span>
+                      <span className="text-sm font-medium text-slate-700">Cho phép "Ghi nhớ đăng nhập"</span>
                       <input
                         type="checkbox"
                         checked={rememberMe}
@@ -161,13 +161,13 @@ export default function SystemSettings() {
                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
                   <div className="flex items-center gap-3 pb-4 border-b border-slate-200">
                     <Shield className="w-5 h-5 text-purple-600" />
-                    <h4 className="font-semibold text-slate-800">System Status</h4>
+                    <h4 className="font-semibold text-slate-800">Trạng thái Hệ thống</h4>
                   </div>
 
                   <label className="flex items-center justify-between p-4 border-2 border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer transition">
                     <div>
-                      <p className="font-medium text-slate-800">Maintenance Mode</p>
-                      <p className="text-sm text-slate-500 mt-1">Temporarily disable access for all users</p>
+                      <p className="font-medium text-slate-800">Chế độ Bảo trì</p>
+                      <p className="text-sm text-slate-500 mt-1">Tạm thời vô hiệu hóa truy cập cho tất cả người dùng</p>
                     </div>
                     <div className="relative">
                       <input
@@ -182,12 +182,12 @@ export default function SystemSettings() {
 
                   <div className="bg-slate-50 rounded-lg p-4 space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-slate-600">System Version:</span>
+                      <span className="text-slate-600">Phiên bản Hệ thống:</span>
                       <span className="font-medium text-slate-800">v2.1.0</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-600">Last Updated:</span>
-                      <span className="font-medium text-slate-800">Oct 19, 2025</span>
+                      <span className="text-slate-600">Cập nhật lần cuối:</span>
+                      <span className="font-medium text-slate-800">19 Tháng 10, 2025</span>
                     </div>
                   </div>
                 </div>

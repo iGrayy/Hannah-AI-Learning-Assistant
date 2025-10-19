@@ -148,8 +148,8 @@ const APIKeys: React.FC = () => {
       {/* Integration Configuration Section */}
       <div className="integration-config-section">
         <div className="config-header">
-          <h2>Integration Configuration</h2>
-          <p className="config-subtitle">Configure external services and APIs</p>
+          <h2>Cấu hình Tích hợp</h2>
+          <p className="config-subtitle">Cấu hình các dịch vụ bên ngoài và API</p>
         </div>
 
         {/* Google Gemini API Configuration */}
@@ -161,13 +161,13 @@ const APIKeys: React.FC = () => {
             </div>
             <button className="test-btn">
               <BarChart2 size={16} />
-              Test Connection
+              Kiểm tra Kết nối
             </button>
           </div>
 
           <div className="config-content">
             <div className="form-group">
-              <label htmlFor="gemini-api-key">API Key</label>
+              <label htmlFor="gemini-api-key">Khóa API</label>
               <div className="input-with-toggle">
                 <input
                   id="gemini-api-key"
@@ -175,7 +175,7 @@ const APIKeys: React.FC = () => {
                   value={geminiApiKey}
                   onChange={(e) => setGeminiApiKey(e.target.value)}
                   className="config-input"
-                  placeholder="Enter your Gemini API key"
+                  placeholder="Nhập khóa API Gemini của bạn"
                 />
                 <button
                   className="toggle-visibility-btn"
@@ -187,7 +187,7 @@ const APIKeys: React.FC = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="model-selection">Model Selection</label>
+              <label htmlFor="model-selection">Lựa chọn Mô hình</label>
               <select
                 id="model-selection"
                 value={selectedModel}
@@ -203,13 +203,13 @@ const APIKeys: React.FC = () => {
             <div className="usage-status">
               <div className="usage-header">
                 <AlertCircle size={16} />
-                <span>Usage Status</span>
+                <span>Trạng thái Sử dụng</span>
               </div>
               <div className="usage-info">
-                <span className="usage-text">API Calls Today: {apiCallsToday} / {apiLimit.toLocaleString()}</span>
+                <span className="usage-text">Lượt gọi API hôm nay: {apiCallsToday} / {apiLimit.toLocaleString()}</span>
                 <div className="usage-bar">
-                  <div 
-                    className="usage-fill" 
+                  <div
+                    className="usage-fill"
                     style={{ width: `${(apiCallsToday / apiLimit) * 100}%` }}
                   ></div>
                 </div>
@@ -223,13 +223,13 @@ const APIKeys: React.FC = () => {
           <div className="config-card-header">
             <div className="config-title-wrapper">
               <Key size={20} className="config-icon external-icon" />
-              <h3>External APIs</h3>
+              <h3>API Bên ngoài</h3>
             </div>
           </div>
 
           <div className="config-content">
             <div className="form-group">
-              <label htmlFor="youtube-api-key">YouTube API Key</label>
+              <label htmlFor="youtube-api-key">Khóa API YouTube</label>
               <div className="input-with-toggle">
                 <input
                   id="youtube-api-key"
@@ -237,7 +237,7 @@ const APIKeys: React.FC = () => {
                   value={youtubeApiKey}
                   onChange={(e) => setYoutubeApiKey(e.target.value)}
                   className="config-input"
-                  placeholder="Enter YouTube API key"
+                  placeholder="Nhập khóa API YouTube"
                 />
                 <button
                   className="toggle-visibility-btn"
@@ -249,7 +249,7 @@ const APIKeys: React.FC = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="max-results">Max Results Per Query</label>
+              <label htmlFor="max-results">Số kết quả tối đa mỗi truy vấn</label>
               <input
                 id="max-results"
                 type="number"
@@ -266,11 +266,11 @@ const APIKeys: React.FC = () => {
         <div className="config-actions">
           <button className="btn-save-changes">
             <Copy size={16} />
-            Save Changes
+            Lưu Thay đổi
           </button>
           <button className="btn-reset">
             <AlertCircle size={16} />
-            Reset to Defaults
+            Đặt lại Mặc định
           </button>
         </div>
       </div>

@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { GraduationCap, LogOut, User } from 'lucide-react';
+import { GraduationCap, LogOut, User, Menu, ChevronRight } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import './Sidebar.css';
 
@@ -13,6 +13,38 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ children, title, subtitle }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const getRoleInVietnamese = (role: string) => {
+    switch (role.toLowerCase()) {
+      case 'student':
+        return 'Sinh viên';
+      case 'faculty':
+        return 'Giảng viên';
+      case 'admin':
+        return 'Quản trị viên';
+      default:
+        return role;
+    }
+  };
+
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
+  // Add/remove class to body for layout adjustments (fallback for :has() selector)
+  useEffect(() => {
+    const body = document.body;
+    if (isCollapsed) {
+      body.classList.add('sidebar-collapsed');
+    } else {
+      body.classList.remove('sidebar-collapsed');
+    }
+
+    return () => {
+      body.classList.remove('sidebar-collapsed');
+    };
+  }, [isCollapsed]);
 
   const handleLogout = () => {
     logout();
@@ -20,19 +52,38 @@ const Sidebar: React.FC<SidebarProps> = ({ children, title, subtitle }) => {
   };
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-header">
-        <div className="sidebar-logo">
-          <GraduationCap size={28} className="logo-icon" />
-          <div className="logo-text">
-            <h2 className="sidebar-title">{title}</h2>
-            <p className="sidebar-subtitle">{subtitle}</p>
-          </div>
-        </div>
+        {isCollapsed ? (
+          <button
+            className="sidebar-toggle-btn"
+            onClick={toggleSidebar}
+            title="Mở rộng sidebar"
+          >
+            <Menu size={20} />
+          </button>
+        ) : (
+          <>
+            <div className="sidebar-logo">
+              <GraduationCap size={28} className="logo-icon" />
+              <div className="logo-text">
+                <h2 className="sidebar-title">{title}</h2>
+                <p className="sidebar-subtitle">{subtitle}</p>
+              </div>
+            </div>
+            <button
+              className="sidebar-toggle-btn"
+              onClick={toggleSidebar}
+              title="Thu gọn sidebar"
+            >
+              <Menu size={20} />
+            </button>
+          </>
+        )}
       </div>
 
       <nav className="sidebar-nav">
-        {children}
+        {React.cloneElement(children as React.ReactElement, { isCollapsed } as any)}
       </nav>
 
       <div className="sidebar-footer">
@@ -41,13 +92,19 @@ const Sidebar: React.FC<SidebarProps> = ({ children, title, subtitle }) => {
             <div className="user-avatar">
               <User size={20} />
             </div>
-            <div className="user-info">
-              <p className="user-name">{user.name}</p>
-              <p className="user-role">{user.role}</p>
-            </div>
+            {!isCollapsed && (
+              <div className="user-info">
+                <p className="user-name">{user.name}</p>
+                <p className="user-role">{getRoleInVietnamese(user.role)}</p>
+              </div>
+            )}
           </div>
         )}
-        <button className="logout-btn" onClick={handleLogout} title="Đăng xuất">
+        <button
+          className="logout-btn"
+          onClick={handleLogout}
+          title="Đăng xuất"
+        >
           <LogOut size={18} />
         </button>
       </div>

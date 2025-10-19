@@ -338,7 +338,7 @@ export default function KnowledgeManagement() {
             </h2>
             <label className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer transition">
               <Upload className="w-5 h-5" />
-              Upload File
+              Tải lên File
               <input type="file" className="hidden" multiple />
             </label>
           </div>
@@ -474,7 +474,7 @@ export default function KnowledgeManagement() {
           {/* Learning Outcomes */}
           <div className="bg-white rounded-xl shadow-lg p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-slate-800">Learning Outcomes</h2>
+              <h2 className="text-2xl font-bold text-slate-800">Kết quả Học tập</h2>
               <button 
                 onClick={() => setActiveForm('outcome')}
                 className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
@@ -540,7 +540,7 @@ export default function KnowledgeManagement() {
               </div>
             ) : (
               <div className="text-center py-8 text-slate-500">
-                <p>Chưa có Learning Outcomes cho môn này</p>
+                <p>Chưa có Kết quả Học tập cho môn này</p>
               </div>
             )}
           </div>
@@ -551,7 +551,7 @@ export default function KnowledgeManagement() {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
                 <AlertCircle className="w-6 h-6 text-orange-600" />
-                Common Challenges
+                Thách thức Thường gặp
               </h2>
               <button 
                 onClick={() => setActiveForm('challenge')}
@@ -616,7 +616,7 @@ export default function KnowledgeManagement() {
               </div>
             ) : (
               <div className="text-center py-8 text-slate-500">
-                <p>Chưa có Common Challenges cho môn này</p>
+                <p>Chưa có Thách thức Thường gặp cho môn này</p>
               </div>
             )}
           </div>

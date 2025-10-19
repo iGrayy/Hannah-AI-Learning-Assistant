@@ -126,31 +126,31 @@ const SystemMonitoring: React.FC = () => {
 
       <div className="monitoring-controls">
         <div className="control-group">
-          <label>Name</label>
+          <label>Tên</label>
           <div className="select-wrapper">
-            <select 
-              value={selectedProject} 
+            <select
+              value={selectedProject}
               onChange={(e) => setSelectedProject(e.target.value)}
               className="select-input"
             >
-              <option value="test">Test Environment</option>
-              <option value="production">Production</option>
-              <option value="development">Development</option>
+              <option value="test">Môi trường Thử nghiệm</option>
+              <option value="production">Sản xuất</option>
+              <option value="development">Phát triển</option>
             </select>
           </div>
         </div>
         <div className="control-group">
-          <label>Time Range</label>
+          <label>Khoảng thời gian</label>
           <div className="select-wrapper">
-            <select 
-              value={timeRange} 
+            <select
+              value={timeRange}
               onChange={(e) => setTimeRange(e.target.value)}
               className="select-input"
             >
-              <option value="24Hours">Last 24 Hours</option>
-              <option value="7Days">Last 7 Days</option>
-              <option value="28Days">Last 28 Days</option>
-              <option value="90Days">Last 90 Days</option>
+              <option value="24Hours">24 giờ qua</option>
+              <option value="7Days">7 ngày qua</option>
+              <option value="28Days">28 ngày qua</option>
+              <option value="90Days">90 ngày qua</option>
             </select>
           </div>
         </div>
@@ -158,7 +158,7 @@ const SystemMonitoring: React.FC = () => {
 
       <div className="overview-section">
         <div className="overview-header">
-          <h2>Overview</h2>
+          <h2>Tổng quan</h2>
           <button className="info-button">
             <Info size={16} />
           </button>
@@ -167,42 +167,42 @@ const SystemMonitoring: React.FC = () => {
         <div className="charts-grid">
           <div className="chart-card">
             <div className="chart-header">
-              <h3>Total API Requests per day</h3>
+              <h3>Tổng số yêu cầu API mỗi ngày</h3>
               <div className="chart-badge success">
                 <TrendingUp size={14} />
-                Active
+                Hoạt động
               </div>
             </div>
             <div className="chart-placeholder">
               <div className="no-data-container">
                 <BarChart3 size={48} className="no-data-icon" />
-                <p className="no-data-title">No Data Available</p>
-                <p className="no-data-subtitle">Start making API requests to see your usage statistics</p>
+                <p className="no-data-title">Không có dữ liệu</p>
+                <p className="no-data-subtitle">Bắt đầu thực hiện yêu cầu API để xem thống kê sử dụng</p>
               </div>
             </div>
             <div className="chart-footer">
-              <span className="footer-label">Time series:</span>
+              <span className="footer-label">Chuỗi thời gian:</span>
               <span className="footer-value">0</span>
             </div>
           </div>
 
           <div className="chart-card">
             <div className="chart-header">
-              <h3>Total API Errors per day</h3>
+              <h3>Tổng số lỗi API mỗi ngày</h3>
               <div className="chart-badge warning">
                 <AlertCircle size={14} />
-                Monitoring
+                Giám sát
               </div>
             </div>
             <div className="chart-placeholder">
               <div className="no-data-container">
                 <AlertCircle size={48} className="no-data-icon" />
-                <p className="no-data-title">No Data Available</p>
-                <p className="no-data-subtitle">Error tracking will appear here when available</p>
+                <p className="no-data-title">Không có dữ liệu</p>
+                <p className="no-data-subtitle">Theo dõi lỗi sẽ xuất hiện ở đây khi có sẵn</p>
               </div>
             </div>
             <div className="chart-footer">
-              <span className="footer-label">Time series:</span>
+              <span className="footer-label">Chuỗi thời gian:</span>
               <span className="footer-value">0</span>
             </div>
           </div>
@@ -212,12 +212,12 @@ const SystemMonitoring: React.FC = () => {
       {/* Log Report Section */}
       <div className="log-report-section">
         <div className="log-header">
-          <h2>API Request Logs</h2>
+          <h2>Nhật ký Yêu cầu API</h2>
           <div className="log-controls">
-            <span className="log-count">{logs.length} requests</span>
+            <span className="log-count">{logs.length} yêu cầu</span>
             <button className="refresh-btn">
               <Activity size={16} />
-              Refresh
+              Làm mới
             </button>
           </div>
         </div>
@@ -226,12 +226,12 @@ const SystemMonitoring: React.FC = () => {
           <table className="log-table">
             <thead>
               <tr>
-                <th>Timestamp</th>
-                <th>Method</th>
-                <th>Endpoint</th>
-                <th>Status</th>
-                <th>Response Time</th>
-                <th>Project</th>
+                <th>Thời gian</th>
+                <th>Phương thức</th>
+                <th>Điểm cuối</th>
+                <th>Trạng thái</th>
+                <th>Thời gian phản hồi</th>
+                <th>Dự án</th>
               </tr>
             </thead>
             <tbody>
@@ -266,7 +266,7 @@ const SystemMonitoring: React.FC = () => {
         {logs.length === 0 && (
           <div className="no-logs">
             <Activity size={48} className="no-logs-icon" />
-            <p>No API requests logged yet</p>
+            <p>Chưa có yêu cầu API nào được ghi nhận</p>
           </div>
         )}
       </div>

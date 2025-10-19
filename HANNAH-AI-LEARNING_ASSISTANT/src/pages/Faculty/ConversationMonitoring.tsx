@@ -98,10 +98,10 @@ export default function ConversationMonitoring() {
 
 
   const flagOptions = [
-    { value: 'accuracy_issue', label: 'Accuracy Issue', color: 'red' },
-    { value: 'needs_review', label: 'Needs Review', color: 'yellow' },
-    { value: 'inappropriate', label: 'Inappropriate', color: 'orange' },
-    { value: 'off_topic', label: 'Off Topic', color: 'blue' }
+    { value: 'accuracy_issue', label: 'Vấn đề độ chính xác', color: 'red' },
+    { value: 'needs_review', label: 'Cần xem xét', color: 'yellow' },
+    { value: 'inappropriate', label: 'Không phù hợp', color: 'orange' },
+    { value: 'off_topic', label: 'Ngoài chủ đề', color: 'blue' }
   ];
 
 
@@ -234,7 +234,7 @@ export default function ConversationMonitoring() {
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                     }`}
                 >
-                  Flagged
+                  Được đánh dấu
                 </button>
                 <button
                   onClick={() => setFilterStatus('normal')}
@@ -243,7 +243,7 @@ export default function ConversationMonitoring() {
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                     }`}
                 >
-                  Normal
+                  Bình thường
                 </button>
               </div>
             </div>
@@ -275,7 +275,7 @@ export default function ConversationMonitoring() {
                       <Clock className="w-3 h-3" />
                       {conv.timestamp}
                     </span>
-                    <span>{conv.messageCount} messages</span>
+                    <span>{conv.messageCount} tin nhắn</span>
                   </div>
                   {conv.flags.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-2">
@@ -323,7 +323,7 @@ export default function ConversationMonitoring() {
                       }`}
                   >
                     <Flag className="w-5 h-5" />
-                    {selectedConversation.status === 'flagged' ? 'Flagged' : 'Flag'}
+                    {selectedConversation.status === 'flagged' ? 'Đã đánh dấu' : 'Đánh dấu'}
                   </button>
                 </div>
 
@@ -395,7 +395,7 @@ export default function ConversationMonitoring() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-slate-800">Flag Conversation</h3>
+                <h3 className="text-xl font-bold text-slate-800">Đánh dấu Hội thoại</h3>
                 <button
                   onClick={() => {
                     setShowFlagDialog(false);
@@ -440,7 +440,7 @@ export default function ConversationMonitoring() {
                   onClick={() => handleFlagConversation(selectedConversation.id)}
                   className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium"
                 >
-                  {selectedFlags.length > 0 ? 'Flag Conversation' : 'Remove Flag'}
+                  {selectedFlags.length > 0 ? 'Đánh dấu Hội thoại' : 'Bỏ đánh dấu'}
                 </button>
                 <button
                   onClick={() => {
