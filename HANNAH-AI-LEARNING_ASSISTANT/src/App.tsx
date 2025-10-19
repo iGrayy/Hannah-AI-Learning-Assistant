@@ -8,7 +8,7 @@ import UserManagement from './pages/Admin/UserManagement'
 import SystemMonitoring from './pages/Admin/SystemMonitoring/SystemMonitoring'
 import APIKeys from './pages/Admin/SystemMonitoring/APIKeys/APIKeys'
 import SystemSettings from './pages/Admin/SystemSettings'
-import CourseManagement from './pages/Admin/CourseManagement'
+import CourseManagement from './pages/Admin/CourseManagement/CourseManagement'
 
 function App() {
   return (
