@@ -44,7 +44,7 @@ export default function Chat() {
     const initialQuery = location.state?.query || ''
 
     const [inputValue, setInputValue] = useState('')
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+    const [isBigPictureOpen, setIsBigPictureOpen] = useState(true)
     const [isStudioOpen, setIsStudioOpen] = useState(true)
     const [studioItems, setStudioItems] = useState<StudioItem[]>([])
     const [showReportModal, setShowReportModal] = useState(false)
@@ -630,33 +630,72 @@ OOP mang lại nhiều lợi thế, bao gồm:
             </header>
 
             {/* Main Chat Area */}
-            <main className="chat-main">
-                {/* Sidebar - The Big Picture */}
-                <aside className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
-                    <div className="sidebar-content">
-                        <div className="sidebar-header">
+            <main className="chat-main" style={{display: 'flex', gap: '0', padding: '24px', alignItems: 'stretch'}}>
+                {/* Big Picture Sidebar - Left */}
+                <aside className={`big-picture-sidebar ${isBigPictureOpen ? 'open' : 'closed'}`} style={{order: 1, width: isBigPictureOpen ? '356px' : '56px', padding: '0 24px 0 0', flexShrink: 0}}>
+                    {/* Floating Toggle Button - Only show when sidebar is closed */}
+                    {!isBigPictureOpen && (
+                        <button
+                            className="big-picture-toggle-floating"
+                            onClick={() => setIsBigPictureOpen(true)}
+                            aria-label="Hiện bức tranh toàn cảnh"
+                            style={{
+                                position: 'absolute',
+                                top: '12px',
+                                left: '12px',
+                                zIndex: 1000,
+                                width: '32px',
+                                height: '32px',
+                                borderRadius: '50%',
+                                border: '1px solid #dadce0',
+                                backgroundColor: 'white',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.12)',
+                                transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                                const target = e.target as HTMLButtonElement
+                                target.style.backgroundColor = '#f8f9fa'
+                                target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)'
+                            }}
+                            onMouseLeave={(e) => {
+                                const target = e.target as HTMLButtonElement
+                                target.style.backgroundColor = 'white'
+                                target.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.12)'
+                            }}
+                        >
+                            <PanelLeft size={16} color="#5f6368" />
+                        </button>
+                    )}
+
+                    <div className="big-picture-content">
+                        <div className="big-picture-header">
                             <Book size={20} color="#5f6368" />
-                            <h3 className="sidebar-title">Bức tranh toàn cảnh</h3>
-                            {/* Sidebar Toggle Button */}
+                            <h3 className="big-picture-title">Bức tranh toàn cảnh</h3>
+                            {/* Big Picture Toggle Button */}
                             <button
-                                className="sidebar-toggle-btn"
-                                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                                aria-label={isSidebarOpen ? 'Ẩn thanh bên' : 'Hiện thanh bên'}
+                                className="big-picture-toggle-btn"
+                                onClick={() => setIsBigPictureOpen(!isBigPictureOpen)}
+                                aria-label={isBigPictureOpen ? 'Ẩn bức tranh toàn cảnh' : 'Hiện bức tranh toàn cảnh'}
                             >
-                                {isSidebarOpen ? <PanelLeftClose size={18} /> : <PanelLeft size={18} />}
+                                {isBigPictureOpen ? <PanelLeftClose size={18} /> : <PanelLeft size={18} />}
                             </button>
                         </div>
-                        <h4 className="sidebar-main-title">Lập trình Hướng đối tượng (OOP)</h4>
 
-                        <div className="topics-list">
+                        <h4 className="big-picture-main-title">Lập trình Hướng đối tượng (OOP)</h4>
+
+                        <div className="big-picture-topics">
                             {bigPictureTopics.map((topic, index) => (
-                                <div key={index} className="topic-item">
-                                    <button className="topic-button">
-                                        <span className="topic-title">{topic.title}</span>
+                                <div key={index} className="big-picture-topic-item">
+                                    <button className="big-picture-topic-button">
+                                        <span className="big-picture-topic-title">{topic.title}</span>
                                     </button>
-                                    <div className="subtopics-list">
+                                    <div className="big-picture-subtopics-list">
                                         {topic.subtopics.map((subtopic, subIndex) => (
-                                            <button key={subIndex} className="subtopic-button">
+                                            <button key={subIndex} className="big-picture-subtopic-button">
                                                 {subtopic}
                                             </button>
                                         ))}
@@ -667,7 +706,7 @@ OOP mang lại nhiều lợi thế, bao gồm:
                     </div>
                 </aside>
 
-                <div className="chat-content">
+                <div className="chat-content" style={{order: 2, flex: 1, padding: '0', minWidth: 0}}>
                     {/* Welcome Banner */}
                     <div className="welcome-banner">
                         <div className="welcome-banner-icon">
@@ -770,7 +809,7 @@ OOP mang lại nhiều lợi thế, bao gồm:
                 </div>
 
                 {/* Studio Sidebar - Right */}
-                <aside className={`studio-sidebar ${isStudioOpen ? 'open' : 'closed'}`}>
+                <aside className={`studio-sidebar ${isStudioOpen ? 'open' : 'closed'}`} style={{order: 1, width: isStudioOpen ? '356px' : '56px', padding: '0 0 0 24px', flexShrink: 0}}>
                     <div className="studio-content">
                         <div className="studio-header">
                             <Wand2 size={20} color="#5f6368" />

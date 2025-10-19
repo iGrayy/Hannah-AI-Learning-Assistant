@@ -50,6 +50,8 @@ const Auth: React.FC<AuthProps> = ({ isOpen, onClose, initialTab = 'login' }) =>
             const userData = JSON.parse(savedUser);
             if (userData.role === 'admin') {
               navigate('/admin');
+            } else if (userData.role === 'faculty') {
+              navigate('/faculty');
             }
           }
         }, 100);
