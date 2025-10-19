@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Sparkles, Send, ThumbsUp, ThumbsDown, Share2, Upload, Book, PanelLeftClose, PanelLeft, PanelRightClose, PanelRight, Wand2, GitBranch, FileText, ClipboardCheck, StickyNote, Loader2, MoreVertical, Trash2, ChevronDown, ChevronUp, Link as LinkIcon, List, Pencil, Maximize2, Minimize2, User, LogOut, Share } from 'lucide-react'
+import ProfileIcon from '../../components/ProfileIcon'
 import './Chat.css'
 
 interface StudioItem {
@@ -63,14 +64,12 @@ export default function Chat() {
     const [openMenuId, setOpenMenuId] = useState<string | null>(null)
     const [expandedSources, setExpandedSources] = useState<{ [key: string]: boolean }>({})
     const [showCustomizeModal, setShowCustomizeModal] = useState(false)
-    const [showAvatarMenu, setShowAvatarMenu] = useState(false)
     const [showShareModal, setShowShareModal] = useState(false)
     const [shareEmail, setShareEmail] = useState('')
     const [sharePermission, setSharePermission] = useState<'view' | 'edit'>('view')
     const [notifyPeople, setNotifyPeople] = useState(true)
     const [generalAccess, setGeneralAccess] = useState<'restricted' | 'anyone'>('restricted')
     const [showAccessDropdown, setShowAccessDropdown] = useState(false)
-    const avatarMenuRef = useRef<HTMLDivElement>(null)
     const shareModalRef = useRef<HTMLDivElement>(null)
     const accessDropdownRef = useRef<HTMLDivElement>(null)
     const [selectedFeatureType, setSelectedFeatureType] = useState<'mindmap' | 'notecard' | 'quiz' | null>(null)
@@ -264,21 +263,18 @@ OOP mang lại nhiều lợi thế, bao gồm:
             if (!target.closest('.course-code-dropdown')) {
                 setShowCourseDropdown(false)
             }
-            // Close avatar menu when clicking outside
-            if (avatarMenuRef.current && !avatarMenuRef.current.contains(target)) {
-                setShowAvatarMenu(false)
-            }
+
             // Close access dropdown when clicking outside
             if (accessDropdownRef.current && !accessDropdownRef.current.contains(target)) {
                 setShowAccessDropdown(false)
             }
         }
 
-        if (openMenuId || showCourseDropdown || showAvatarMenu || showAccessDropdown) {
+        if (openMenuId || showCourseDropdown || showAccessDropdown) {
             document.addEventListener('click', handleClickOutside)
             return () => document.removeEventListener('click', handleClickOutside)
         }
-    }, [openMenuId, showCourseDropdown, showAvatarMenu, showAccessDropdown])
+    }, [openMenuId, showCourseDropdown, showAccessDropdown])
 
     const handleCopyLink = () => {
         const link = window.location.href
@@ -629,31 +625,7 @@ OOP mang lại nhiều lợi thế, bao gồm:
                         <Share2 size={20} />
                         <span>Chia sẻ</span>
                     </button>
-                    <div className="avatar-menu-container" ref={avatarMenuRef}>
-                        <button
-                            className="avatar-btn"
-                            aria-label="Hồ sơ người dùng"
-                            onClick={() => setShowAvatarMenu(!showAvatarMenu)}
-                        >
-                            <img
-                                src="https://ui-avatars.com/api/?name=User&background=4285F4&color=fff&size=32"
-                                alt="Ảnh đại diện"
-                                className="avatar-image"
-                            />
-                        </button>
-                        {showAvatarMenu && (
-                            <div className="avatar-dropdown">
-                                <button className="avatar-dropdown-item" onClick={() => navigate('/profile')}>
-                                    <User size={18} />
-                                    <span>Hồ sơ</span>
-                                </button>
-                                <button className="avatar-dropdown-item">
-                                    <LogOut size={18} />
-                                    <span>Đăng xuất</span>
-                                </button>
-                            </div>
-                        )}
-                    </div>
+                    <ProfileIcon />
                 </div>
             </header>
 

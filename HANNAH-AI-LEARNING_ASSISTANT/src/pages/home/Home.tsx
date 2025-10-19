@@ -1,12 +1,15 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react';
+import Auth from '../../components/Auth/Auth';
+import ProfileIcon from '../../components/ProfileIcon';
 import { useNavigate } from 'react-router-dom'
 import { Menu } from 'lucide-react'
+import { useAuth } from '../../contexts/AuthContext'
 import './Home.css'
 
 export default function Home() {
     const navigate = useNavigate()
+    const { isAuthenticated } = useAuth()
     const [isVisible, setIsVisible] = useState(false)
-    const [showModal, setShowModal] = useState(false)
 
     // Scroll animation states
     const [footerTitleVisible, setFooterTitleVisible] = useState(false)
@@ -16,14 +19,11 @@ export default function Home() {
     const [webSectionVisible, setWebSectionVisible] = useState(false)
     const [finalCtaVisible, setFinalCtaVisible] = useState(false)
 
-    // Modal form states
-    const [formData, setFormData] = useState({
-        name: '',
-        gmail: '',
-        learnerType: '',
-        consent1: false,
-        consent2: false
-    })
+    // UI states
+    const [showAuthModal, setShowAuthModal] = useState(false)
+    const [authModalType, setAuthModalType] = useState<'login' | 'register'>('login')
+
+
 
     // Refs for scroll observation
     const footerTitleRef = useRef<HTMLDivElement>(null)
@@ -139,42 +139,24 @@ export default function Home() {
         }
     }, [isTyping, isDeleting, displayText, currentIndex, sampleQuestions])
 
-    const handleOpenModal = () => {
-        setShowModal(true)
-    }
 
-    const handleCloseModal = () => {
-        setShowModal(false)
-    }
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value, type, checked } = e.target
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
-        }))
-    }
-
-    const handleLearnerTypeSelect = (type: string) => {
-        setFormData(prev => ({
-            ...prev,
-            learnerType: type
-        }))
-    }
-
-    const handleSubmit = () => {
-        // Handle form submission
-        console.log('Form submitted:', formData)
-        handleCloseModal()
+    // Hàm kiểm tra yêu cầu đăng nhập
+    const requireLogin = (callback: () => void) => {
+        if (!isAuthenticated) {
+            alert('Vui lòng đăng nhập để sử dụng tính năng này!')
+            return
+        }
+        callback()
     }
 
     return (
         <div className="home-container">
             {/* Modal */}
-            {showModal && (
+            {/* {showModal && (
                 <div className="modal-overlay" onClick={handleCloseModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <h2 className="modal-title">Tham gia danh sách chờ</h2>
+                        <h2 className="modal-title">Học cùng Hannah với Hannah với Hannah</h2>
                         <p className="modal-subtitle">Làm theo các bước dưới đây để tham gia danh sách chờ để dùng thử trải nghiệm Hannah.</p>
 
                         <div className="modal-form">
@@ -271,7 +253,7 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
-            )}
+            )} */}
 
             {/* Ocean Water Background with underwater light patterns */}
             <div className="ocean-background">
@@ -295,36 +277,25 @@ export default function Home() {
                 {/* Left side - Logo */}
                 <div className="header-logo">
                     <h1 className="header-logo-text">Hannah</h1>
+<span className="header-logo-tag">AI Assistant</span>
                 </div>
 
-                {/* Right side - Icons */}
+                {/* Right side - Auth Buttons or Profile */}
                 <div className="header-right-side">
-                    <div className="header-icons-container">
-                        {/* Try Learn Button */}
-                        <button className="try-learn-button" onClick={() => navigate('/learn')}>
-                            Thử Hannah Learn
-                        </button>
-
-                        {/* Hamburger Menu Icon */}
-                        <button className="icon-button" aria-label="Menu">
-                            <Menu className="w-5 h-5 text-gray-900" />
-                        </button>
-
-                        {/* User Avatar */}
-                        <button className="avatar-button" aria-label="User profile">
-                            <img
-                                src="https://ui-avatars.com/api/?name=Hannah&background=random&size=40"
-                                alt="User avatar"
-                                className="avatar-img"
-                                onError={(e) => {
-                                    e.currentTarget.style.display = 'none';
-                                    if (e.currentTarget.parentElement) {
-                                        e.currentTarget.parentElement.innerHTML = '<span class="text-white text-sm font-semibold">H</span>';
-                                    }
-                                }}
-                            />
-                        </button>
-                    </div>
+                    {!isAuthenticated ? (
+                        <div className="auth-buttons-container">
+                            <button className="register-button" onClick={() => { setAuthModalType('register'); setShowAuthModal(true); }}>
+                                Đăng ký
+                            </button>
+                            <button className="login-button" onClick={() => { setAuthModalType('login'); setShowAuthModal(true); }}>
+                                Đăng nhập
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="header-icons-container">
+                            <ProfileIcon />
+                        </div>
+                    )}
                 </div>
             </header >
 
@@ -339,7 +310,7 @@ export default function Home() {
 
                     {/* Large Search Input Pill */}
                     <div className="search-container">
-                        <div className={`search-input-wrapper ${isVisible ? 'visible' : ''}`} onClick={handleOpenModal} style={{ cursor: 'pointer' }}>
+                        <div className={`search-input-wrapper ${isVisible ? 'visible' : ''}`} onClick={() => requireLogin(() => navigate('/learn'))} style={{ cursor: 'pointer' }}>
                             <div className="search-input-container">
                                 <span className="search-input-text">{displayText}</span>
                                 {displayText.length < sampleQuestions[currentIndex].length && isTyping && (
@@ -372,8 +343,8 @@ export default function Home() {
 
                     {/* CTA Button - Join Waitlist */}
                     <div className="pt-6">
-                        <button className={`cta-button ${isVisible ? 'visible' : ''}`} onClick={handleOpenModal}>
-                            <span className="cta-button-text">Tham gia danh sách chờ</span>
+                        <button className={`cta-button ${isVisible ? 'visible' : ''}`} onClick={() => requireLogin(() => navigate('/learn'))}>
+                            <span className="cta-button-text">Học cùng Hannah</span>
                         </button>
                     </div>
                 </div>
@@ -611,8 +582,8 @@ export default function Home() {
                     </div>
 
                     <div className={`final-cta-button-wrapper ${finalCtaVisible ? 'visible' : ''}`}>
-                        <button className="final-cta-button" onClick={handleOpenModal}>
-                            <span className="final-cta-button-text">Tham gia danh sách chờ</span>
+                        <button className="final-cta-button" onClick={() => requireLogin(() => navigate('/learn'))}>
+                            <span className="final-cta-button-text">Học cùng Hannah</span>
                         </button>
                     </div>
                 </div>
@@ -628,6 +599,13 @@ export default function Home() {
                     </div>
                 </div>
             </footer>
+
+            {/* Auth Modal */}
+            <Auth
+                isOpen={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+                initialTab={authModalType}
+            />
         </div >
     )
 }
