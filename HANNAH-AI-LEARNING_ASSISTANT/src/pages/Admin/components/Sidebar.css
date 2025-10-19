@@ -37,6 +37,14 @@
   text-decoration: none;
   transition: all 0.3s ease;
   border-left: 3px solid transparent;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
+  text-align: left;
 }
 
 .sidebar-link:hover {
@@ -53,6 +61,69 @@
 
 .sidebar-link span {
   font-size: 14px;
+  font-weight: 500;
+  flex: 1;
+}
+
+/* Sidebar Group */
+.sidebar-group {
+  position: relative;
+}
+
+.sidebar-toggle {
+  position: relative;
+  justify-content: space-between;
+}
+
+.sidebar-toggle svg:last-child {
+  margin-left: auto;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-toggle.active {
+  background: #495057;
+  color: #fff;
+}
+
+/* Submenu */
+.sidebar-submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  background: #2c3136;
+}
+
+.sidebar-submenu.open {
+  max-height: 200px;
+}
+
+.sidebar-sublink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px 10px 48px;
+  color: #adb5bd;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+  font-size: 13px;
+}
+
+.sidebar-sublink:hover {
+  background: #3a4046;
+  color: #fff;
+  border-left-color: #17a2b8;
+}
+
+.sidebar-sublink.active {
+  background: #3a4046;
+  color: #fff;
+  border-left-color: #17a2b8;
+  font-weight: 600;
+}
+
+.sidebar-sublink span {
+  font-size: 13px;
   font-weight: 500;
 }
 

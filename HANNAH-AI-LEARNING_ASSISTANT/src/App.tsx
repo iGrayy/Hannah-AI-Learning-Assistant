@@ -5,7 +5,8 @@ import Chat from './pages/Chat/Chat'
 import Profile from './pages/Profile/Profile'
 import AdminLayout from './pages/Admin/AdminLayout'
 import UserManagement from './pages/Admin/UserManagement'
-import SystemMonitoring from './pages/Admin/SystemMonitoring'
+import SystemMonitoring from './pages/Admin/SystemMonitoring/SystemMonitoring'
+import APIKeys from './pages/Admin/SystemMonitoring/APIKeys/APIKeys'
 import SystemSettings from './pages/Admin/SystemSettings'
 import CourseManagement from './pages/Admin/CourseManagement'
 
@@ -21,7 +22,8 @@ function App() {
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<UserManagement />} />
         <Route path="user-management" element={<UserManagement />} />
-        <Route path="system-monitoring" element={<SystemMonitoring />} />
+        <Route path="system-monitoring/usage" element={<SystemMonitoring />} />
+        <Route path="system-monitoring/api-keys" element={<APIKeys />} />
         <Route path="system-settings" element={<SystemSettings />} />
         <Route path="course-management" element={<CourseManagement />} />
       </Route>
