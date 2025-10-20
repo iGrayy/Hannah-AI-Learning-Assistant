@@ -1,8 +1,8 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { MessageSquare, FileText, BarChart3, HelpCircle } from 'lucide-react';
-import { useFacultyContext } from '../../../contexts/FacultyContext';
-import ReusableSidebar from '../../../components/Sidebar/Sidebar';
+import React from "react";
+import { NavLink } from "react-router-dom";
+import { MessageSquare, FileText, BarChart3 } from "lucide-react";
+import { useFacultyContext } from "../../../contexts/FacultyContext";
+import ReusableSidebar from "../../../components/Sidebar/Sidebar";
 
 interface MenuItem {
   path: string;
@@ -16,38 +16,40 @@ interface FacultySidebarContentProps {
   isCollapsed?: boolean;
 }
 
-const FacultySidebarContent: React.FC<FacultySidebarContentProps> = ({ isCollapsed = false }) => {
+const FacultySidebarContent: React.FC<FacultySidebarContentProps> = ({
+  isCollapsed = false,
+}) => {
   const { flaggedConversationsCount } = useFacultyContext();
 
   const menuItems: MenuItem[] = [
+    // {
+    //   path: '/faculty/faq',
+    //   label: 'Quản lý FAQ',
+    //   badge: null,
+    //   description: 'Quản lý câu hỏi thường gặp',
+    //   icon: HelpCircle
+    // },
     {
-      path: '/faculty/faq',
-      label: 'Quản lý FAQ',
-      badge: null,
-      description: 'Quản lý câu hỏi thường gặp',
-      icon: HelpCircle
-    },
-    {
-      path: '/faculty/conversations',
-      label: 'Giám sát hội thoại',
+      path: "/faculty/conversations",
+      label: "Giám sát hội thoại",
       badge: flaggedConversationsCount > 0 ? flaggedConversationsCount : null,
-      description: 'Các hội thoại cần xem xét',
-      icon: MessageSquare
+      description: "Các hội thoại cần xem xét",
+      icon: MessageSquare,
     },
     {
-      path: '/faculty/materials',
-      label: 'Quản lý tài liệu',
+      path: "/faculty/materials",
+      label: "Quản lý tài liệu",
       badge: null,
-      description: 'Quản lý tài liệu và bài giảng',
-      icon: FileText
+      description: "Quản lý tài liệu và bài giảng",
+      icon: FileText,
     },
     {
-      path: '/faculty/analytics',
-      label: 'Thống kê câu hỏi',
+      path: "/faculty/analytics",
+      label: "Thống kê câu hỏi",
       badge: null,
-      description: 'Phân tích xu hướng câu hỏi',
-      icon: BarChart3
-    }
+      description: "Phân tích xu hướng câu hỏi",
+      icon: BarChart3,
+    },
   ];
 
   return (
@@ -63,11 +65,13 @@ const FacultySidebarContent: React.FC<FacultySidebarContentProps> = ({ isCollaps
             title={isCollapsed ? item.label : item.description}
           >
             <IconComponent size={20} />
-            {!isCollapsed && <span className="sidebar-label">{item.label}</span>}
             {!isCollapsed && (
-              <div style={{display: 'flex', justifyContent: 'right'}}>
+              <span className="sidebar-label">{item.label}</span>
+            )}
+            {!isCollapsed && (
+              <div style={{ display: "flex", justifyContent: "right" }}>
                 {item.badge !== null && (
-                    <span className="sidebar-badge">{item.badge}</span>
+                  <span className="sidebar-badge">{item.badge}</span>
                 )}
               </div>
             )}
