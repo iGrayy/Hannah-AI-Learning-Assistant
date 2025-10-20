@@ -611,7 +611,7 @@ OOP mang lại nhiều lợi thế, bao gồm:
     }
 
     return (
-        <div className="chat-container">
+        <div className="chat-container dark-theme">
             {/* Header */}
             <header className="chat-header">
                 <div className="chat-header-left">

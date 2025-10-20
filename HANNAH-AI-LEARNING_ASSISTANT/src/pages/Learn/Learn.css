@@ -2,7 +2,7 @@
 
 .learn-container {
     min-height: 100vh;
-    background: linear-gradient(to bottom, #F8F9FA 0%, #FFFFFF 100%);
+    background: linear-gradient(to bottom, #0f0f0f 0%, #1a1a1a 100%);
     display: flex;
     flex-direction: column;
 }
@@ -12,7 +12,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: white;
+    background: #1a1a1a;
+    border-bottom: 1px solid #3c4043;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -33,12 +34,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #5F6368;
+    color: #bdc1c6;
     transition: background 0.2s ease;
 }
 
 .menu-icon-btn:hover {
-    background: #F1F3F4;
+    background: #333333;
 }
 
 .learn-logo {
@@ -55,35 +56,35 @@
 }
 
 .learn-logo:hover {
-    background: rgba(66, 133, 244, 0.08);
+    background: rgba(138, 180, 248, 0.08);
     transform: translateY(-1px);
 }
 
 .learn-logo:active {
     transform: translateY(0);
-    background: rgba(66, 133, 244, 0.12);
+    background: rgba(138, 180, 248, 0.12);
 }
 
 .learn-logo .lucide {
-    color: #4285F4;
+    color: #8ab4f8;
     transition: all 0.2s ease;
 }
 
 .learn-logo:hover .lucide {
-    color: #1a73e8;
+    color: #aecbfa;
     transform: rotate(5deg) scale(1.05);
 }
 
 .learn-logo-text {
     font-size: 1.375rem;
     font-weight: 500;
-    color: #202124;
+    color: #e8eaed;
     letter-spacing: -0.01em;
     transition: color 0.2s ease;
 }
 
 .learn-logo:hover .learn-logo-text {
-    color: #1a73e8;
+    color: #aecbfa;
 }
 
 .learn-header-right {
@@ -220,13 +221,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #5F6368;
+    color: #bdc1c6;
     transition: all 0.2s ease;
 }
 
 .history-toggle-btn:hover {
-    background: #F1F3F4;
-    color: #202124;
+    background: #333333;
+    color: #e8eaed;
 }
 
 /* History Sidebar */
@@ -256,8 +257,8 @@
     left: 0;
     width: 320px;
     height: 100vh;
-    background: white;
-    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+    background: #1a1a1a;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.5);
     z-index: 1000;
     display: flex;
     flex-direction: column;
@@ -278,14 +279,14 @@
     justify-content: space-between;
     align-items: center;
     padding:0.9rem 1.25rem;
-    border-bottom: 1px solid #E5E7EB;
+    border-bottom: 1px solid #3c4043;
     flex-shrink: 0;
 }
 
 .history-sidebar-title {
     font-size: 1.125rem;
     font-weight: 500;
-    color: #202124;
+    color: #e8eaed;
     margin: 0;
 }
 
@@ -298,13 +299,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #5F6368;
+    color: #bdc1c6;
     transition: all 0.2s ease;
 }
 
 .history-sidebar-close:hover {
-    background: #F1F3F4;
-    color: #202124;
+    background: #333333;
+    color: #e8eaed;
 }
 
 .history-sidebar-content {
@@ -320,7 +321,7 @@
 .history-section-title {
     font-size: 0.875rem;
     font-weight: 500;
-    color: #5F6368;
+    color: #9aa0a6;
     margin: 0 0 0.75rem 0;
     padding: 0 1.5rem;
     text-transform: uppercase;
@@ -347,7 +348,7 @@
 }
 
 .history-item:hover {
-    background: #F1F3F4;
+    background: #333333;
 }
 
 .history-item-icon {
@@ -357,7 +358,7 @@
 
 .history-item-text {
     font-size: 0.875rem;
-    color: #202124;
+    color: #e8eaed;
     line-height: 1.4;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -382,7 +383,7 @@
 .learn-title {
     font-size: 3rem;
     font-weight: 400;
-    color: #3c4043;
+    color: #e8eaed;
     text-align: center;
     margin-bottom: 2rem;
     letter-spacing: -0.02em;
@@ -395,14 +396,14 @@
 }
 
 .learn-search-box {
-    background: #f1f3f4;
-    border: 1px solid #dadce0;
+    background: #202124;
+    border: 1px solid #3c4043;
     border-radius: 28px;
     padding: 0.75rem 1.25rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     margin-bottom: 0;
     cursor: text;
@@ -411,14 +412,14 @@
 }
 
 .learn-search-box:hover {
-    background: #e8eaed;
-    box-shadow: 0 1px 3px rgba(60, 64, 67, 0.15);
+    background: #262626;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 .learn-search-box:focus-within {
-    background: white;
-    box-shadow: 0 2px 8px rgba(60, 64, 67, 0.15);
-    border-color: #dadce0;
+    background: #2d2d2d;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    border-color: #8ab4f8;
 }
 
 .learn-search-input {
@@ -426,12 +427,12 @@
     border: none;
     outline: none;
     font-size: 1rem;
-    color: #3c4043;
+    color: #e8eaed;
     background: transparent;
 }
 
 .learn-search-input::placeholder {
-    color: #5f6368;
+    color: #9aa0a6;
     font-weight: 400;
 }
 
@@ -444,27 +445,27 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #5f6368;
+    color: #bdc1c6;
     transition: all 0.2s ease;
 }
 
 .upload-btn:hover {
-    background: rgba(95, 99, 104, 0.1);
+    background: rgba(189, 193, 198, 0.1);
 }
 
 .upload-btn.has-content {
-    color: #1a73e8;
-    background: rgba(26, 115, 232, 0.08);
+    color: #8ab4f8;
+    background: rgba(138, 180, 248, 0.08);
 }
 
 .upload-btn.has-content:hover {
-    background: rgba(26, 115, 232, 0.12);
+    background: rgba(138, 180, 248, 0.12);
     transform: scale(1.05);
 }
 
 /* Dashed Border Wrapper */
 .dashed-border-wrapper {
-    border: 2px dashed #dadce0;
+    border: 2px dashed #3c4043;
     border-radius: 20px;
     padding: 0;
     margin-top: -14px;
@@ -474,15 +475,15 @@
     padding-bottom: 1.5rem;
     transition: all 0.2s ease;
     animation: slideUp 0.4s ease-out;
-    width: 700px;
+    width: 750px;
     position: relative;
     right: 35px;
     bottom: 20px;
 }
 
 .dashed-border-wrapper:hover {
-    border-color: #9aa0a6;
-    background: #fafafa;
+    border-color: #5f6368;
+    background: #262626;
 }
 
 /* PDF Companion Card */
@@ -520,19 +521,19 @@
 .pdf-companion-title {
     font-size: 1.125rem;
     font-weight: 500;
-    color: #202124;
+    color: #e8eaed;
     margin-bottom: 0.5rem;
 }
 
 .pdf-companion-description {
     font-size: 0.875rem;
-    color: #5F6368;
+    color: #bdc1c6;
     line-height: 1.5;
 }
 
 /* Footer Section */
 .learn-footer {
-    background: linear-gradient(180deg, #d4dfe6 0%, #c5d3db 100%);
+    background: linear-gradient(180deg, #262626 0%, #1a1a1a 100%);
     padding: 3rem 1.5rem 4rem;
     margin-top: 2rem;
 }
@@ -545,7 +546,7 @@
 .reading-nook-title {
     font-size: 2.5rem;
     font-weight: 400;
-    color: #4a5568;
+    color: #e8eaed;
     text-align: center;
     margin-bottom: 0.5rem;
     letter-spacing: -0.01em;
@@ -553,7 +554,7 @@
 
 .reading-nook-subtitle {
     font-size: 1rem;
-    color: #6b7280;
+    color: #bdc1c6;
     text-align: center;
     margin-bottom: 3rem;
 }
@@ -776,11 +777,11 @@
 .shelf-top {
     width: 100%;
     height: 25px;
-    background: linear-gradient(135deg, #b8a89a 0%, #9e8e7f 100%);
+    background: linear-gradient(135deg, #5f6368 0%, #4a4d52 100%);
     border-radius: 4px 4px 0 0;
-    box-shadow: 
-        0 -2px 4px rgba(255, 255, 255, 0.3),
-        0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow:
+        0 -2px 4px rgba(255, 255, 255, 0.1),
+        0 4px 12px rgba(0, 0, 0, 0.5);
     position: relative;
 }
 
@@ -791,18 +792,18 @@
     left: 0;
     right: 0;
     height: 8px;
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), transparent);
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), transparent);
     border-radius: 4px 4px 0 0;
 }
 
 .shelf-front {
     width: 100%;
     height: 20px;
-    background: linear-gradient(to bottom, #8a7a6b 0%, #6e5f51 100%);
+    background: linear-gradient(to bottom, #3c4043 0%, #2d2d2d 100%);
     border-radius: 0 0 3px 3px;
-    box-shadow: 
-        0 6px 16px rgba(0, 0, 0, 0.4),
-        inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow:
+        0 6px 16px rgba(0, 0, 0, 0.6),
+        inset 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 /* Animations */
