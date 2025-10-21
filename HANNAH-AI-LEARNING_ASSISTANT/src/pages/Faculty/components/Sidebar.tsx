@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { MessageSquare, FileText, BarChart3 } from "lucide-react";
+import { MessageSquare, FileText, BarChart3,HelpCircle } from "lucide-react";
 import { useFacultyContext } from "../../../contexts/FacultyContext";
 import ReusableSidebar from "../../../components/Sidebar/Sidebar";
 
@@ -22,13 +22,13 @@ const FacultySidebarContent: React.FC<FacultySidebarContentProps> = ({
   const { flaggedConversationsCount } = useFacultyContext();
 
   const menuItems: MenuItem[] = [
-    // {
-    //   path: '/faculty/faq',
-    //   label: 'Quản lý FAQ',
-    //   badge: null,
-    //   description: 'Quản lý câu hỏi thường gặp',
-    //   icon: HelpCircle
-    // },
+    {
+      path: '/faculty/faq',
+      label: 'Quản lý FAQ',
+      badge: null,
+      description: 'Quản lý câu hỏi thường gặp',
+      icon: HelpCircle
+    },
     {
       path: "/faculty/conversations",
       label: "Giám sát hội thoại",
