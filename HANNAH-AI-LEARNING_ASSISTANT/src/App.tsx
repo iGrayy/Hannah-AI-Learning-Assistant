@@ -11,9 +11,9 @@ import SystemSettings from './pages/Admin/SystemSettings'
 import CourseManagement from './pages/Admin/CourseManagement/CourseManagement'
 import FacultyLayout from './pages/Faculty/FacultyLayout'
 import FAQManagement from './pages/Faculty/FAQ/FAQManagement'
-import ConversationMonitoring from './pages/Faculty/ConversationMonitoring'
 import KnowledgeManagement from './pages/Faculty/KnowledgeManagement'
 import QuestionAnalytics from './pages/Faculty/QuestionAnalytics/QuestionAnalytics'
+import ConversationMonitoring from './pages/Faculty/ConversationMonitoring/ConversationMonitoring'
 
 function App() {
   return (

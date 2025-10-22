@@ -77,12 +77,42 @@ export const getFlaggedConversations = async (filters: any = {}) => {
   await delay();
   let data = [...mockFlaggedConversations];
   
-  if (filters.status) {
-    data = data.filter(conv => conv.status === filters.status);
+  // Filter by faculty - only show pending or handled by current faculty
+  if (filters.facultyId) {
+    data = data.filter(conv => 
+      conv.status === 'Mới' || 
+      conv.assignedTo === filters.facultyName
+    );
+  }
+  
+  if (filters.status && filters.status !== 'all') {
+    const statusMap: { [key: string]: string } = {
+      'pending': 'Mới',
+      'reviewed': 'Đang xử lý',
+      'resolved': 'Đã giải quyết'
+    };
+    data = data.filter(conv => conv.status === statusMap[filters.status]);
   }
   
   if (filters.course) {
     data = data.filter(conv => conv.course === filters.course);
+  }
+  
+  if (filters.search) {
+    const searchTerm = filters.search.toLowerCase();
+    data = data.filter(conv => 
+      conv.student.name.toLowerCase().includes(searchTerm) ||
+      conv.excerpt.toLowerCase().includes(searchTerm) ||
+      conv.course.toLowerCase().includes(searchTerm)
+    );
+  }
+  
+  if (filters.dateFrom) {
+    data = data.filter(conv => new Date(conv.flaggedAt) >= new Date(filters.dateFrom));
+  }
+  
+  if (filters.dateTo) {
+    data = data.filter(conv => new Date(conv.flaggedAt) <= new Date(filters.dateTo + 'T23:59:59'));
   }
   
   if (filters.priority) {
@@ -98,14 +128,19 @@ export const getConversationDetail = async (id: any) => {
   return conversation ? { success: true, data: conversation } : { success: false, error: "Conversation not found" };
 };
 
-export const updateConversationStatus = async (id: any, newStatus: any, auditEntry: any) => {
+export const updateConversationStatus = async (id: any, newStatus: any, facultyName?: string) => {
   await delay(300);
   const conversation = mockFlaggedConversations.find(conv => conv.id === id);
   if (conversation) {
     conversation.status = newStatus;
+    if (facultyName) {
+      conversation.assignedTo = facultyName;
+    }
     conversation.auditTrail.push({
-      ...auditEntry,
-      timestamp: new Date().toISOString()
+      action: newStatus === 'Đang xử lý' ? 'Đã xem xét' : 'Đã giải quyết',
+      user: facultyName || 'Unknown',
+      timestamp: new Date().toISOString(),
+      details: `Chuyển trạng thái sang ${newStatus}`
     });
     return { success: true, data: conversation };
   }
