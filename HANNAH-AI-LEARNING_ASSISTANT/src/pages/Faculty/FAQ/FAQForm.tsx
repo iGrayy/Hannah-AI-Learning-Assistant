@@ -142,7 +142,7 @@ const FAQForm = ({ faq, courses, onSuccess, onCancel }: FAQFormProps) => {
             </div>
             <div>
               <h3 className="text-xl font-bold text-gray-900">
-                {faq ? 'Chỉnh sửa FAQ' : 'Thêm FAQ mới'}
+                {faq ? 'Chỉnh sửa câu hỏi thường gặp' : 'Thêm câu hỏi thường gặp mới'}
               </h3>
               <p className="text-sm text-gray-600 mt-0.5">
                 {faq ? 'Cập nhật thông tin câu hỏi thường gặp' : 'Tạo câu hỏi thường gặp mới cho sinh viên'}
@@ -319,7 +319,7 @@ const FAQForm = ({ faq, courses, onSuccess, onCancel }: FAQFormProps) => {
                 </div>
               ) : (
                 <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg text-center">
-                  <p className="text-sm text-gray-500">Chưa có tag nào. Hãy thêm tag để phân loại FAQ</p>
+                  <p className="text-sm text-gray-500">Chưa có tag nào. Hãy thêm tag để phân loại câu hỏi thường gặp</p>
                 </div>
               )}
               
@@ -332,7 +332,7 @@ const FAQForm = ({ faq, courses, onSuccess, onCancel }: FAQFormProps) => {
                 </p>
               )}
               <p className="mt-2 text-xs text-gray-500">
-                Tags giúp sinh viên tìm kiếm FAQ dễ dàng hơn. Ví dụ: "nộp bài", "deadline", "hướng dẫn"
+                Tags giúp sinh viên tìm kiếm câu hỏi dễ dàng hơn. Ví dụ: "nộp bài", "deadline", "hướng dẫn"
               </p>
             </div>
           </div>
@@ -356,14 +356,14 @@ const FAQForm = ({ faq, courses, onSuccess, onCancel }: FAQFormProps) => {
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
-                Cập nhật FAQ
+                Cập nhật câu hỏi
               </>
             ) : (
               <>
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
-                Tạo FAQ mới
+                Tạo câu hỏi mới
               </>
             )}
           </button>

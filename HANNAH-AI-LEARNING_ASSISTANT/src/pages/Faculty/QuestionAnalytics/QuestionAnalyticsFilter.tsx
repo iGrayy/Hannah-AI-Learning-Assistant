@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
 
-interface ConversationFilterProps {
+interface QuestionAnalyticsFilterProps {
   filters: {
-    status: string;
     search: string;
     dateFrom: string;
     dateTo: string;
     course: string;
-    sortBy: string;
+    timePeriod: string;
+    scoreFilter: string;
   };
   courses: string[];
   onFilterChange: (filters: Partial<{
-    status: string;
     search: string;
     dateFrom: string;
     dateTo: string;
     course: string;
-    sortBy: string;
+    timePeriod: string;
+    scoreFilter: string;
   }>) => void;
   onReset: () => void;
 }
 
-const ConversationFilter: React.FC<ConversationFilterProps> = ({ 
+const QuestionAnalyticsFilter: React.FC<QuestionAnalyticsFilterProps> = ({ 
   filters, 
   courses,
   onFilterChange, 
@@ -29,11 +29,11 @@ const ConversationFilter: React.FC<ConversationFilterProps> = ({
 }) => {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  const statusOptions = [
+  const scoreOptions = [
     { value: 'all', label: 'Tất cả', color: 'gray' },
-    { value: 'pending', label: 'Chưa xử lý', color: 'orange' },
-    { value: 'reviewed', label: 'Đã xem xét', color: 'blue' },
-    { value: 'resolved', label: 'Đã giải quyết', color: 'green' }
+    { value: 'low', label: 'Thấp (< 60%)', color: 'red' },
+    { value: 'medium', label: 'Trung bình (60-79%)', color: 'orange' },
+    { value: 'high', label: 'Cao (≥ 80%)', color: 'green' }
   ];
 
   return (
@@ -42,7 +42,7 @@ const ConversationFilter: React.FC<ConversationFilterProps> = ({
         {/* Main Filters */}
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Search Input */}
-          <div className="flex-1">
+          {/* <div className="flex-1">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Tìm kiếm
             </label>
@@ -55,24 +55,24 @@ const ConversationFilter: React.FC<ConversationFilterProps> = ({
               <input
                 type="text"
                 className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-                placeholder="Tìm nội dung cuộc hội thoại"
+                placeholder="Tìm chủ đề hoặc sinh viên"
                 value={filters.search}
                 onChange={(e) => onFilterChange({ search: e.target.value })}
               />
             </div>
-          </div>
+          </div> */}
 
-          {/* Status Filter */}
+          {/* Score Filter */}
           <div className="lg:w-56">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Trạng thái
+              Lọc theo điểm
             </label>
             <select
               className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-              value={filters.status}
-              onChange={(e) => onFilterChange({ status: e.target.value })}
+              value={filters.scoreFilter}
+              onChange={(e) => onFilterChange({ scoreFilter: e.target.value })}
             >
-              {statusOptions.map(option => (
+              {scoreOptions.map(option => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
@@ -87,13 +87,14 @@ const ConversationFilter: React.FC<ConversationFilterProps> = ({
             </label>
             <select
               className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-              value={filters.sortBy}
-              onChange={(e) => onFilterChange({ sortBy: e.target.value })}
+              value={filters.timePeriod}
+              onChange={(e) => onFilterChange({ timePeriod: e.target.value })}
             >
               <option value="all">Tất cả</option>
+              <option value="today">Hôm nay</option>
               <option value="week">Tuần này</option>
               <option value="month">Tháng này</option>
-              {/* <option value="semester">Kỳ học này</option> */}
+              <option value="semester">Kỳ học này</option>
               <option value="year">Năm nay</option>
             </select>
           </div>
@@ -176,15 +177,15 @@ const ConversationFilter: React.FC<ConversationFilterProps> = ({
         )}
 
         {/* Active Filters Display */}
-        {(filters.status !== 'all' || filters.search || filters.dateFrom || filters.dateTo || filters.course) && (
+        {(filters.scoreFilter !== 'all' || filters.search || filters.dateFrom || filters.dateTo || filters.course || filters.timePeriod !== 'all') && (
           <div className="mt-4 flex flex-wrap gap-2">
             <span className="text-sm text-gray-600">Bộ lọc đang áp dụng:</span>
             
-            {filters.status !== 'all' && (
+            {filters.scoreFilter !== 'all' && (
               <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                Trạng thái: {statusOptions.find(s => s.value === filters.status)?.label}
+                Điểm: {scoreOptions.find(s => s.value === filters.scoreFilter)?.label}
                 <button
-                  onClick={() => onFilterChange({ status: 'all' })}
+                  onClick={() => onFilterChange({ scoreFilter: 'all' })}
                   className="ml-2 hover:text-blue-900"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -200,6 +201,26 @@ const ConversationFilter: React.FC<ConversationFilterProps> = ({
                 <button
                   onClick={() => onFilterChange({ search: '' })}
                   className="ml-2 hover:text-green-900"
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </span>
+            )}
+
+            {filters.timePeriod !== 'all' && (
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                Thời gian: {
+                  filters.timePeriod === 'today' ? 'Hôm nay' :
+                  filters.timePeriod === 'week' ? 'Tuần này' :
+                  filters.timePeriod === 'month' ? 'Tháng này' :
+                  filters.timePeriod === 'semester' ? 'Kỳ học này' :
+                  filters.timePeriod === 'year' ? 'Năm nay' : filters.timePeriod
+                }
+                <button
+                  onClick={() => onFilterChange({ timePeriod: 'all' })}
+                  className="ml-2 hover:text-yellow-900"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -242,4 +263,4 @@ const ConversationFilter: React.FC<ConversationFilterProps> = ({
   );
 };
 
-export default ConversationFilter;
+export default QuestionAnalyticsFilter;

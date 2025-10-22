@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { AlertCircle, Plus, Edit2, Trash2, Save, X, FileText, ChevronRight } from 'lucide-react';
+import { AlertCircle, Plus, Edit2, Trash2, Save, X, ChevronRight } from 'lucide-react';
 
 interface Challenge {
     id: number;
@@ -7,6 +7,8 @@ interface Challenge {
     description: string;
     solution: string;
     frequency: 'Cao' | 'Trung bình' | 'Thấp';
+    materialId: number;
+    materialName: string;
 }
 
 interface Material {
@@ -15,7 +17,7 @@ interface Material {
     type: string;
     size: string;
     date: string;
-    challenges: Challenge[];
+    challenges: Omit<Challenge, 'materialId' | 'materialName'>[];
 }
 
 interface Course {
@@ -30,10 +32,15 @@ const ChallengesManagement: React.FC = () => {
     const [selectedSemester, setSelectedSemester] = useState<string>('Kỳ 1');
     const [showSemesterDropdown, setShowSemesterDropdown] = useState<boolean>(false);
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-    const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(null);
     const [showAddForm, setShowAddForm] = useState<boolean>(false);
-    const [editingId, setEditingId] = useState<number | null>(null);
-    const [newChallenge, setNewChallenge] = useState<Omit<Challenge, 'id'>>({
+    const [editingChallenge, setEditingChallenge] = useState<Challenge | null>(null);
+    const [selectedMaterialId, setSelectedMaterialId] = useState<number | null>(null);
+    const [newChallenge, setNewChallenge] = useState<{
+        title: string;
+        description: string;
+        solution: string;
+        frequency: 'Cao' | 'Trung bình' | 'Thấp';
+    }>({
         title: '',
         description: '',
         solution: '',
@@ -149,23 +156,43 @@ const ChallengesManagement: React.FC = () => {
         setSelectedSemester(semester);
         setShowSemesterDropdown(false);
         setSelectedCourse(null);
-        setSelectedMaterial(null);
     };
 
     const handleCourseSelect = (course: Course) => {
         setSelectedCourse(course);
-        setSelectedMaterial(null);
+    };
+
+    // Get all challenges from all materials in the selected course
+    const getAllChallengesForCourse = (): Challenge[] => {
+        if (!selectedCourse) return [];
+        
+        const allChallenges: Challenge[] = [];
+        selectedCourse.materials.forEach(material => {
+            material.challenges.forEach(challenge => {
+                allChallenges.push({
+                    ...challenge,
+                    materialId: material.id,
+                    materialName: material.name
+                });
+            });
+        });
+        return allChallenges;
+    };
+
+    const getTotalChallengesCount = (): number => {
+        if (!selectedCourse) return 0;
+        return selectedCourse.materials.reduce((sum, material) => sum + material.challenges.length, 0);
     };
 
     const handleAddChallenge = () => {
-        if (!newChallenge.title.trim() || !selectedCourse || !selectedMaterial) return;
+        if (!newChallenge.title.trim() || !selectedCourse || !selectedMaterialId) return;
 
         const updatedCourses = courses.map(course => {
             if (course.id === selectedCourse.id) {
                 const updatedMaterials = course.materials.map(material => {
-                    if (material.id === selectedMaterial.id) {
-                        const updatedChallenges = editingId
-                            ? material.challenges.map(c => c.id === editingId ? { ...newChallenge, id: editingId } : c)
+                    if (material.id === selectedMaterialId) {
+                        const updatedChallenges = editingChallenge
+                            ? material.challenges.map(c => c.id === editingChallenge.id ? { ...newChallenge, id: editingChallenge.id } : c)
                             : [...material.challenges, { ...newChallenge, id: Date.now() }];
                         return { ...material, challenges: updatedChallenges };
                     }
@@ -178,23 +205,21 @@ const ChallengesManagement: React.FC = () => {
 
         setCourses(updatedCourses);
 
-        // Update selected states
+        // Update selected course
         const updatedCourse = updatedCourses.find(c => c.id === selectedCourse.id);
         if (updatedCourse) {
             setSelectedCourse(updatedCourse);
-            const updatedMaterial = updatedCourse.materials.find(m => m.id === selectedMaterial.id);
-            if (updatedMaterial) {
-                setSelectedMaterial(updatedMaterial);
-            }
         }
 
         setNewChallenge({ title: '', description: '', solution: '', frequency: 'Trung bình' });
-        setEditingId(null);
+        setEditingChallenge(null);
+        setSelectedMaterialId(null);
         setShowAddForm(false);
     };
 
     const handleEditChallenge = (challenge: Challenge) => {
-        setEditingId(challenge.id);
+        setEditingChallenge(challenge);
+        setSelectedMaterialId(challenge.materialId);
         setShowAddForm(true);
         setNewChallenge({
             title: challenge.title,
@@ -204,13 +229,15 @@ const ChallengesManagement: React.FC = () => {
         });
     };
 
-    const handleDeleteChallenge = (challengeId: number) => {
-        if (!selectedCourse || !selectedMaterial) return;
+    const handleDeleteChallenge = (challengeId: number, materialId: number) => {
+        if (!selectedCourse) return;
+
+        if (!window.confirm('Bạn có chắc chắn muốn xóa thách thức này?')) return;
 
         const updatedCourses = courses.map(course => {
             if (course.id === selectedCourse.id) {
                 const updatedMaterials = course.materials.map(material => {
-                    if (material.id === selectedMaterial.id) {
+                    if (material.id === materialId) {
                         return {
                             ...material,
                             challenges: material.challenges.filter(c => c.id !== challengeId)
@@ -225,14 +252,10 @@ const ChallengesManagement: React.FC = () => {
 
         setCourses(updatedCourses);
 
-        // Update selected states
+        // Update selected course
         const updatedCourse = updatedCourses.find(c => c.id === selectedCourse.id);
         if (updatedCourse) {
             setSelectedCourse(updatedCourse);
-            const updatedMaterial = updatedCourse.materials.find(m => m.id === selectedMaterial.id);
-            if (updatedMaterial) {
-                setSelectedMaterial(updatedMaterial);
-            }
         }
     };
 
@@ -245,6 +268,8 @@ const ChallengesManagement: React.FC = () => {
         }
     };
 
+    const allChallenges = getAllChallengesForCourse();
+
     return (
         <div className="p-6 space-y-6">
             {/* Header */}
@@ -254,7 +279,7 @@ const ChallengesManagement: React.FC = () => {
                         <AlertCircle className="w-7 h-7 text-orange-600" />
                         Thách Thức Thường Gặp
                     </h1>
-                    <p className="text-slate-600 mt-1">Quản lý các thách thức học tập của sinh viên theo tài liệu môn học</p>
+                    <p className="text-slate-600 mt-1">Quản lý các thách thức học tập của sinh viên theo môn học</p>
                 </div>
             </div>
 
@@ -278,8 +303,7 @@ const ChallengesManagement: React.FC = () => {
                             </div>
                         </div>
                         <ChevronRight
-                            className={`w-5 h-5 text-slate-400 transition-transform duration-200 ${showSemesterDropdown ? 'rotate-90' : ''
-                                }`}
+                            className={`w-5 h-5 text-slate-400 transition-transform duration-200 ${showSemesterDropdown ? 'rotate-90' : ''}`}
                         />
                     </button>
 
@@ -290,17 +314,20 @@ const ChallengesManagement: React.FC = () => {
                                     <button
                                         key={semester}
                                         onClick={() => handleSemesterChange(semester)}
-                                        className={`w-full px-5 py-4 flex items-center gap-4 transition-all duration-150 ${selectedSemester === semester
+                                        className={`w-full px-5 py-4 flex items-center gap-4 transition-all duration-150 ${
+                                            selectedSemester === semester
                                                 ? 'bg-gradient-to-r from-orange-50 to-red-50 border-l-4 border-orange-600'
                                                 : 'hover:bg-orange-50 border-l-4 border-transparent'
-                                            }`}
+                                        }`}
                                     >
-                                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold ${selectedSemester === semester ? 'bg-orange-600' : 'bg-slate-400'
-                                            }`}>
+                                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold ${
+                                            selectedSemester === semester ? 'bg-orange-600' : 'bg-slate-400'
+                                        }`}>
                                             {semester.replace('Kỳ ', '')}
                                         </div>
-                                        <span className={`font-semibold ${selectedSemester === semester ? 'text-orange-600' : 'text-slate-600'
-                                            }`}>
+                                        <span className={`font-semibold ${
+                                            selectedSemester === semester ? 'text-orange-600' : 'text-slate-600'
+                                        }`}>
                                             {semester}
                                         </span>
                                         {selectedSemester === semester && (
@@ -323,37 +350,45 @@ const ChallengesManagement: React.FC = () => {
                             Chọn Môn Học ({coursesForSemester.length} môn)
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {coursesForSemester.map((course) => (
-                                <button
-                                    key={course.id}
-                                    onClick={() => handleCourseSelect(course)}
-                                    className={`p-4 rounded-xl border-2 transition-all duration-200 text-left ${selectedCourse?.id === course.id
-                                            ? 'border-orange-500 bg-gradient-to-br from-orange-50 to-red-50 shadow-lg scale-105'
-                                            : 'border-slate-200 bg-white hover:border-orange-300 hover:shadow-md hover:scale-105 hover:-translate-y-1'
+                            {coursesForSemester.map((course) => {
+                                const totalChallenges = course.materials.reduce((sum, m) => sum + m.challenges.length, 0);
+                                return (
+                                    <button
+                                        key={course.id}
+                                        onClick={() => handleCourseSelect(course)}
+                                        className={`p-4 rounded-xl border-2 transition-all duration-200 text-left ${
+                                            selectedCourse?.id === course.id
+                                                ? 'border-orange-500 bg-gradient-to-br from-orange-50 to-red-50 shadow-lg scale-105'
+                                                : 'border-slate-200 bg-white hover:border-orange-300 hover:shadow-md hover:scale-105 hover:-translate-y-1'
                                         }`}
-                                >
-                                    <div className="flex items-start justify-between mb-2">
-                                        <AlertCircle className={`w-5 h-5 ${selectedCourse?.id === course.id ? 'text-orange-600' : 'text-slate-400'
+                                    >
+                                        <div className="flex items-start justify-between mb-2">
+                                            <AlertCircle className={`w-5 h-5 ${
+                                                selectedCourse?.id === course.id ? 'text-orange-600' : 'text-slate-400'
                                             }`} />
-                                        {selectedCourse?.id === course.id && (
-                                            <div className="flex items-center gap-1 text-orange-600 text-xs font-semibold">
-                                                <div className="w-2 h-2 bg-orange-600 rounded-full animate-pulse" />
-                                                Đang chọn
-                                            </div>
-                                        )}
-                                    </div>
-                                    <h4 className="font-bold text-slate-800 mb-1">{course.name}</h4>
-                                    <p className="text-sm text-slate-600 mb-2">{course.code}</p>
-                                    <div className="flex items-center gap-2 text-xs">
-                                        <span className={`px-2 py-1 rounded-full font-medium ${selectedCourse?.id === course.id
-                                                ? 'bg-orange-100 text-orange-700'
-                                                : 'bg-slate-100 text-slate-600'
+                                            {selectedCourse?.id === course.id && (
+                                                <div className="flex items-center gap-1 text-orange-600 text-xs font-semibold">
+                                                    <div className="w-2 h-2 bg-orange-600 rounded-full animate-pulse" />
+                                                    Đang chọn
+                                                </div>
+                                            )}
+                                        </div>
+                                        <h4 className="font-bold text-slate-800 mb-1">{course.name}</h4>
+                                        <p className="text-sm text-slate-600 mb-2">{course.code}</p>
+                                        <div className="flex items-center gap-2 text-xs flex-wrap">
+                                            <span className={`px-2 py-1 rounded-full font-medium ${
+                                                selectedCourse?.id === course.id
+                                                    ? 'bg-orange-100 text-orange-700'
+                                                    : 'bg-slate-100 text-slate-600'
                                             }`}>
-                                            {course.materials.length} tài liệu
-                                        </span>
-                                    </div>
-                                </button>
-                            ))}
+                                                {totalChallenges} thách thức
+                                            </span>
+                                            {/* <span className="text-slate-400">•</span> */}
+                                            {/* <span className="text-slate-600">{course.materials.length} tài liệu</span> */}
+                                        </div>
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
                 )}
@@ -366,116 +401,63 @@ const ChallengesManagement: React.FC = () => {
                 )}
             </div>
 
-            {/* Materials List - Show when course is selected but no material selected */}
-            {selectedCourse && !selectedMaterial && (
+            {/* Challenges List by Course - Show when course is selected */}
+            {selectedCourse && (
                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                            <FileText className="w-6 h-6 text-orange-600" />
-                            Tài Liệu - {selectedCourse.name}
-                        </h2>
-                        <span className="text-sm text-slate-600">
-                            {selectedCourse.materials.length} tài liệu
-                        </span>
-                    </div>
-
-                    <div className="space-y-3">
-                        {selectedCourse.materials.map((material) => (
-                            <button
-                                key={material.id}
-                                onClick={() => setSelectedMaterial(material)}
-                                className="w-full flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-orange-50 hover:shadow-md transition-all duration-200 group border-2 border-transparent hover:border-orange-200"
-                            >
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center group-hover:bg-orange-200 transition-colors">
-                                        <FileText className="w-6 h-6 text-orange-600" />
-                                    </div>
-                                    <div className="text-left">
-                                        <h3 className="font-semibold text-slate-800 group-hover:text-orange-600 transition-colors">
-                                            {material.name}
-                                        </h3>
-                                        <div className="flex items-center gap-3 mt-1 text-sm text-slate-600">
-                                            <span>{material.type}</span>
-                                            <span>•</span>
-                                            <span>{material.size}</span>
-                                            <span>•</span>
-                                            <span>{material.date}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-semibold">
-                                        {material.challenges.length} thách thức
-                                    </span>
-                                    <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-orange-600 group-hover:translate-x-1 transition-all" />
-                                </div>
-                            </button>
-                        ))}
-                    </div>
-
-                    {selectedCourse.materials.length === 0 && (
-                        <div className="text-center py-8 text-slate-500">
-                            <FileText className="w-12 h-12 mx-auto mb-2 text-slate-300" />
-                            <p>Chưa có tài liệu nào</p>
-                        </div>
-                    )}
-                </div>
-            )}
-
-            {/* Challenges Detail - Show when material is selected */}
-            {selectedCourse && selectedMaterial && (
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    {/* Back Button and Material Info */}
                     <div className="mb-6">
-                        <button
-                            onClick={() => setSelectedMaterial(null)}
-                            className="flex items-center gap-2 text-orange-600 hover:text-orange-700 font-semibold mb-4 p-2 hover:bg-orange-50 rounded-lg transition-colors"
-                        >
-                            <ChevronRight className="w-5 h-5 rotate-180" />
-                            Quay lại danh sách tài liệu
-                        </button>
-
-                        <div className="p-4 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg border-2 border-orange-200 flex items-start justify-between">
-                            <div className="flex-1">
-                                <div className="flex items-center gap-3 mb-2">
-                                    <FileText className="w-6 h-6 text-orange-600" />
-                                    <h3 className="font-bold text-slate-800 text-lg">{selectedMaterial.name}</h3>
-                                </div>
-                                <div className="flex items-center gap-3 text-sm text-slate-600 ml-9">
-                                    <span>{selectedMaterial.type}</span>
-                                    <span>•</span>
-                                    <span>{selectedMaterial.size}</span>
-                                    <span>•</span>
-                                    <span>{selectedMaterial.date}</span>
-                                    <span>•</span>
-                                    <span className="font-semibold text-orange-600">
-                                        {selectedMaterial.challenges.length} thách thức
-                                    </span>
-                                </div>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                                    <AlertCircle className="w-6 h-6 text-orange-600" />
+                                    Thách Thức - {selectedCourse.name}
+                                </h2>
+                                <p className="text-sm text-slate-600 mt-1">{selectedCourse.code}</p>
                             </div>
-
-                            {/* Add Challenge Button */}
-                            {!showAddForm && !editingId && (
-                                <button
-                                    onClick={() => setShowAddForm(true)}
-                                    className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-semibold whitespace-nowrap"
-                                >
-                                    <Plus className="w-4 h-4" />
-                                    Thêm Thách Thức
-                                </button>
-                            )}
+                            <div className="flex items-center gap-3">
+                                <span className="px-4 py-2 bg-orange-100 text-orange-700 rounded-lg text-sm font-semibold">
+                                    {getTotalChallengesCount()} thách thức
+                                </span>
+                                {!showAddForm && (
+                                    <button
+                                        onClick={() => setShowAddForm(true)}
+                                        className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-semibold"
+                                    >
+                                        <Plus className="w-4 h-4" />
+                                        Thêm Thách Thức
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     </div>
 
                     {/* Add/Edit Challenge Form */}
-                    {(showAddForm || editingId) && (
+                    {showAddForm && (
                         <div className="mb-6 p-4 bg-orange-50 rounded-lg border-2 border-orange-200">
                             <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
                                 <Plus className="w-5 h-5 text-orange-600" />
-                                {editingId ? 'Chỉnh Sửa Thách Thức' : 'Thêm Thách Thức Mới'}
+                                {editingChallenge ? 'Chỉnh Sửa Thách Thức' : 'Thêm Thách Thức Mới'}
                             </h3>
 
                             <div className="space-y-3">
+                                <div>
+                                    <label className="block text-sm font-semibold text-slate-700 mb-2">
+                                        Chọn tài liệu *
+                                    </label>
+                                    <select
+                                        value={selectedMaterialId || ''}
+                                        onChange={(e) => setSelectedMaterialId(Number(e.target.value))}
+                                        className="w-full px-4 py-2 border-2 border-orange-200 rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none"
+                                        disabled={!!editingChallenge}
+                                    >
+                                        <option value="">-- Chọn tài liệu --</option>
+                                        {selectedCourse.materials.map(material => (
+                                            <option key={material.id} value={material.id}>
+                                                {material.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
                                 <div>
                                     <label className="block text-sm font-semibold text-slate-700 mb-2">
                                         Tiêu đề thách thức *
@@ -521,7 +503,7 @@ const ChallengesManagement: React.FC = () => {
                                     </label>
                                     <select
                                         value={newChallenge.frequency}
-                                        onChange={(e) => setNewChallenge({ ...newChallenge, frequency: e.target.value as Challenge['frequency'] })}
+                                        onChange={(e) => setNewChallenge({ ...newChallenge, frequency: e.target.value as typeof newChallenge.frequency })}
                                         className="w-full px-4 py-2 border-2 border-orange-200 rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none"
                                     >
                                         <option value="Cao">Cao</option>
@@ -533,17 +515,18 @@ const ChallengesManagement: React.FC = () => {
                                 <div className="flex gap-2 pt-2">
                                     <button
                                         onClick={handleAddChallenge}
-                                        disabled={!newChallenge.title.trim()}
+                                        disabled={!newChallenge.title.trim() || !selectedMaterialId}
                                         className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors font-semibold"
                                     >
                                         <Save className="w-4 h-4" />
-                                        {editingId ? 'Lưu Thay Đổi' : 'Thêm Thách Thức'}
+                                        {editingChallenge ? 'Lưu Thay Đổi' : 'Thêm Thách Thức'}
                                     </button>
 
                                     <button
                                         onClick={() => {
                                             setShowAddForm(false);
-                                            setEditingId(null);
+                                            setEditingChallenge(null);
+                                            setSelectedMaterialId(null);
                                             setNewChallenge({ title: '', description: '', solution: '', frequency: 'Trung bình' });
                                         }}
                                         className="flex items-center gap-2 px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors font-semibold"
@@ -558,62 +541,46 @@ const ChallengesManagement: React.FC = () => {
 
                     {/* Challenges List */}
                     <div>
-                        <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                            <AlertCircle className="w-5 h-5 text-orange-600" />
-                            Danh Sách Thách Thức ({selectedMaterial.challenges.length})
-                        </h3>
-
-                        {selectedMaterial.challenges.length === 0 ? (
-                            <div className="text-center py-8 text-slate-500 bg-slate-50 rounded-lg">
+                        {allChallenges.length === 0 ? (
+                            <div className="text-center py-12 text-slate-500 bg-slate-50 rounded-lg">
                                 <AlertCircle className="w-12 h-12 mx-auto mb-2 text-slate-300" />
-                                <p>Chưa có thách thức nào được thêm</p>
+                                <p className="text-lg font-semibold">Chưa có thách thức nào</p>
+                                <p className="text-sm mt-1">Nhấn nút "Thêm Thách Thức" để bắt đầu</p>
                             </div>
                         ) : (
-                            <div className="space-y-4">
-                                {selectedMaterial.challenges.map((challenge, index) => (
+                            <div className="space-y-2">
+                                {allChallenges.map((challenge, index) => (
                                     <div
-                                        key={challenge.id}
-                                        className="p-4 border-2 border-slate-200 rounded-lg hover:border-orange-300 hover:shadow-md transition-all bg-white"
+                                        key={`${challenge.materialId}-${challenge.id}`}
+                                        className="flex items-center gap-3 p-3 border border-slate-200 rounded-lg hover:border-orange-300 hover:bg-orange-50 transition-all bg-white group"
                                     >
-                                        <div className="flex items-start justify-between mb-3">
-                                            <div className="flex items-start gap-3 flex-1">
-                                                <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                                    <span className="font-bold text-orange-600">{index + 1}</span>
-                                                </div>
-                                                <div className="flex-1">
-                                                    <h4 className="font-bold text-slate-800 mb-2">{challenge.title}</h4>
-                                                    <div className="space-y-2 text-sm">
-                                                        <div>
-                                                            <span className="font-semibold text-slate-700">Mô tả: </span>
-                                                            <span className="text-slate-600">{challenge.description}</span>
-                                                        </div>
-                                                        <div>
-                                                            <span className="font-semibold text-slate-700">Giải pháp: </span>
-                                                            <span className="text-slate-600">{challenge.solution}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="flex items-center gap-2 ml-4">
-                                                <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getFrequencyColor(challenge.frequency)}`}>
-                                                    {challenge.frequency}
-                                                </span>
-                                                <button
-                                                    onClick={() => handleEditChallenge(challenge)}
-                                                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                                    title="Chỉnh sửa"
-                                                >
-                                                    <Edit2 className="w-4 h-4" />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDeleteChallenge(challenge.id)}
-                                                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                                    title="Xóa"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
-                                            </div>
+                                        <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-orange-200 transition-colors">
+                                            <span className="font-bold text-orange-600">{index + 1}</span>
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="font-semibold text-slate-800 truncate">{challenge.title}</h4>
+                                        </div>
+                                        {/* <span className={`px-2 py-1 rounded-full text-xs font-semibold border flex-shrink-0 ${getFrequencyColor(challenge.frequency)}`}>
+                                            {challenge.frequency}
+                                        </span>
+                                        <span className="text-xs text-slate-500 px-2 py-1 bg-slate-100 rounded flex-shrink-0">
+                                            📄 {challenge.materialName}
+                                        </span> */}
+                                        <div className="flex gap-1 flex-shrink-0">
+                                            <button
+                                                onClick={() => handleEditChallenge(challenge)}
+                                                className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                                                title="Chỉnh sửa"
+                                            >
+                                                <Edit2 className="w-4 h-4" />
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteChallenge(challenge.id, challenge.materialId)}
+                                                className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors"
+                                                title="Xóa"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
                                         </div>
                                     </div>
                                 ))}

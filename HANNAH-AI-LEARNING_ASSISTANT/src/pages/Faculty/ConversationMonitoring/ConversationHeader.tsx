@@ -14,7 +14,7 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
-            Quản lý Cuộc hội thoại
+            Giám sát hội thoại
           </h1>
           <p className="mt-2 text-sm text-gray-600">
             Theo dõi và quản lý các cuộc hội thoại được đánh dấu cần xem xét

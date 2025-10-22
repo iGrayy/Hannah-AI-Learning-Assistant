@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useApp } from '../../../contexts/AppContext';
-import { TrendingUp, TrendingDown, Calendar, Filter } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
+import QuestionAnalyticsFilter from './QuestionAnalyticsFilter';
 
 // Knowledge Gap Analytics - Based on Quiz Performance from Learn Studio
 interface QuizAttempt {
@@ -43,9 +44,20 @@ interface KnowledgeGapData {
 const KnowledgeGapAnalysis = () => {
   const { setLoading, showNotification } = useApp();
   const [gapData, setGapData] = useState<KnowledgeGapData | null>(null);
-  const [dateRange, setDateRange] = useState('30');
-  const [scoreFilter, setScoreFilter] = useState<'all' | 'low' | 'medium' | 'high'>('all');
   const [selectedQuiz, setSelectedQuiz] = useState<QuizAttempt | null>(null);
+  
+  // Filter state
+  const [filters, setFilters] = useState({
+    search: '',
+    dateFrom: '',
+    dateTo: '',
+    course: '',
+    timePeriod: 'all',
+    scoreFilter: 'all'
+  });
+
+  // Available courses from mock data
+  const availableCourses = ['Software Engineering', 'Database Systems', 'Data Structures'];
 
   // Mock data - Replace with API call
   const mockData: KnowledgeGapData = {
@@ -69,7 +81,7 @@ const KnowledgeGapAnalysis = () => {
 
   useEffect(() => {
     loadGapData();
-  }, [dateRange, scoreFilter]);
+  }, [filters]);
 
   const loadGapData = async () => {
     try {
@@ -98,12 +110,93 @@ const KnowledgeGapAnalysis = () => {
     return 'bg-red-100 text-red-800';
   };
 
+  // Filter handlers
+  const handleFilterChange = (newFilters: Partial<typeof filters>) => {
+    setFilters(prev => ({ ...prev, ...newFilters }));
+  };
+
+  const handleResetFilters = () => {
+    setFilters({
+      search: '',
+      dateFrom: '',
+      dateTo: '',
+      course: '',
+      timePeriod: 'all',
+      scoreFilter: 'all'
+    });
+  };
+
   const filterQuizzes = (quizzes: QuizAttempt[]) => {
-    if (scoreFilter === 'all') return quizzes;
-    if (scoreFilter === 'low') return quizzes.filter(q => q.percentage < 60);
-    if (scoreFilter === 'medium') return quizzes.filter(q => q.percentage >= 60 && q.percentage < 80);
-    if (scoreFilter === 'high') return quizzes.filter(q => q.percentage >= 80);
-    return quizzes;
+    let filtered = [...quizzes];
+
+    // Filter by score
+    if (filters.scoreFilter !== 'all') {
+      if (filters.scoreFilter === 'low') filtered = filtered.filter(q => q.percentage < 60);
+      if (filters.scoreFilter === 'medium') filtered = filtered.filter(q => q.percentage >= 60 && q.percentage < 80);
+      if (filters.scoreFilter === 'high') filtered = filtered.filter(q => q.percentage >= 80);
+    }
+
+    // Filter by search
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      filtered = filtered.filter(q => 
+        q.studentName.toLowerCase().includes(searchLower) ||
+        q.topic.toLowerCase().includes(searchLower) ||
+        q.course.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Filter by course
+    if (filters.course) {
+      filtered = filtered.filter(q => q.course === filters.course);
+    }
+
+    // Filter by time period
+    if (filters.timePeriod !== 'all') {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      
+      filtered = filtered.filter(q => {
+        const quizDate = new Date(q.timestamp);
+        
+        switch (filters.timePeriod) {
+          case 'today':
+            return quizDate >= today;
+          case 'week':
+            const weekAgo = new Date(today);
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            return quizDate >= weekAgo;
+          case 'month':
+            const monthAgo = new Date(today);
+            monthAgo.setMonth(monthAgo.getMonth() - 1);
+            return quizDate >= monthAgo;
+          case 'semester':
+            // Assuming semester is 4 months
+            const semesterAgo = new Date(today);
+            semesterAgo.setMonth(semesterAgo.getMonth() - 4);
+            return quizDate >= semesterAgo;
+          case 'year':
+            const yearAgo = new Date(today);
+            yearAgo.setFullYear(yearAgo.getFullYear() - 1);
+            return quizDate >= yearAgo;
+          default:
+            return true;
+        }
+      });
+    }
+
+    // Filter by custom date range
+    if (filters.dateFrom) {
+      const fromDate = new Date(filters.dateFrom);
+      filtered = filtered.filter(q => new Date(q.timestamp) >= fromDate);
+    }
+    if (filters.dateTo) {
+      const toDate = new Date(filters.dateTo);
+      toDate.setHours(23, 59, 59, 999);
+      filtered = filtered.filter(q => new Date(q.timestamp) <= toDate);
+    }
+
+    return filtered;
   };
 
   if (!gapData) {
@@ -115,6 +208,12 @@ const KnowledgeGapAnalysis = () => {
   }
 
   const filteredQuizzes = filterQuizzes(gapData.recentQuizzes);
+  
+  // Calculate filtered statistics
+  const filteredTotalAttempts = filteredQuizzes.length;
+  const filteredAverageScore = filteredQuizzes.length > 0 
+    ? filteredQuizzes.reduce((sum, quiz) => sum + quiz.percentage, 0) / filteredQuizzes.length 
+    : 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
@@ -125,13 +224,26 @@ const KnowledgeGapAnalysis = () => {
           <p className="text-slate-600">Theo dõi điểm quiz theo chủ đề từ Learn Studio</p>
         </div>
 
+        {/* Filter Component */}
+        <QuestionAnalyticsFilter
+          filters={filters}
+          courses={availableCourses}
+          onFilterChange={handleFilterChange}
+          onReset={handleResetFilters}
+        />
+
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-blue-100 text-sm font-medium mb-1">Tổng số lượt làm Quiz</p>
-                <p className="text-4xl font-bold">{gapData.totalAttempts}</p>
+                <p className="text-4xl font-bold">{filteredTotalAttempts}</p>
+                {filteredTotalAttempts !== gapData.totalAttempts && (
+                  <p className="text-blue-200 text-xs mt-1">
+                    (Tổng: {gapData.totalAttempts})
+                  </p>
+                )}
               </div>
               <div className="text-6xl opacity-20">📝</div>
             </div>
@@ -141,7 +253,12 @@ const KnowledgeGapAnalysis = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-purple-100 text-sm font-medium mb-1">Điểm trung bình</p>
-                <p className="text-4xl font-bold">{gapData.averageScore.toFixed(1)}%</p>
+                <p className="text-4xl font-bold">{filteredAverageScore.toFixed(1)}%</p>
+                {filteredAverageScore.toFixed(1) !== gapData.averageScore.toFixed(1) && (
+                  <p className="text-purple-200 text-xs mt-1">
+                    (Tổng: {gapData.averageScore.toFixed(1)}%)
+                  </p>
+                )}
               </div>
               <div className="text-6xl opacity-20">📈</div>
             </div>
@@ -195,40 +312,6 @@ const KnowledgeGapAnalysis = () => {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Filters */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-slate-600" />
-              <span className="text-sm font-medium text-slate-700">Khoảng thời gian:</span>
-              <select
-                value={dateRange}
-                onChange={(e) => setDateRange(e.target.value)}
-                className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="7">7 ngày qua</option>
-                <option value="30">30 ngày qua</option>
-                <option value="90">3 tháng qua</option>
-              </select>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-slate-600" />
-              <span className="text-sm font-medium text-slate-700">Lọc theo điểm:</span>
-              <select
-                value={scoreFilter}
-                onChange={(e) => setScoreFilter(e.target.value as any)}
-                className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="all">Tất cả</option>
-                <option value="low">Thấp (&lt; 60%)</option>
-                <option value="medium">Trung bình (60-79%)</option>
-                <option value="high">Cao (≥ 80%)</option>
-              </select>
-            </div>
           </div>
         </div>
 

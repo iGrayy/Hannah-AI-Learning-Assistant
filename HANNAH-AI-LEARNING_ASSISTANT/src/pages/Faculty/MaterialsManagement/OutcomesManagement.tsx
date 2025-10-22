@@ -1,10 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { Target, Trash2, Edit2, BookOpen, ChevronDown, Plus, X, Check, FileText, ChevronRight } from 'lucide-react';
+import { Target, Trash2, Edit2, ChevronDown, Plus, X, Check } from 'lucide-react';
 
 // Define types
 interface Outcome {
   id: number;
   text: string;
+  materialId: number;
+  materialName: string;
 }
 
 interface Material {
@@ -13,7 +15,7 @@ interface Material {
   type: string;
   size: string;
   date: string;
-  outcomes: Outcome[];
+  outcomes: Omit<Outcome, 'materialId' | 'materialName'>[];
 }
 
 interface Course {
@@ -95,11 +97,11 @@ const OutcomesManagement: React.FC = () => {
 
   const [selectedSemester, setSelectedSemester] = useState<string>('Kỳ 1');
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-  const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(null);
   const [showSemesterDropdown, setShowSemesterDropdown] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ text: '' });
   const [editingItem, setEditingItem] = useState<Outcome | null>(null);
+  const [selectedMaterialId, setSelectedMaterialId] = useState<number | null>(null);
 
   // Get courses for selected semester
   const coursesForSemester = useMemo(() => {
@@ -114,8 +116,30 @@ const OutcomesManagement: React.FC = () => {
     setSelectedCourse(semesterCourses.length > 0 ? semesterCourses[0] : null);
   };
 
+  // Get all outcomes from all materials in the selected course
+  const getAllOutcomesForCourse = (): Outcome[] => {
+    if (!selectedCourse) return [];
+    
+    const allOutcomes: Outcome[] = [];
+    selectedCourse.materials.forEach(material => {
+      material.outcomes.forEach(outcome => {
+        allOutcomes.push({
+          ...outcome,
+          materialId: material.id,
+          materialName: material.name
+        });
+      });
+    });
+    return allOutcomes;
+  };
+
+  const getTotalOutcomesCount = (): number => {
+    if (!selectedCourse) return 0;
+    return selectedCourse.materials.reduce((sum, material) => sum + material.outcomes.length, 0);
+  };
+
   const handleAddOutcome = () => {
-    if (!selectedCourse || !selectedMaterial) return;
+    if (!selectedCourse || !selectedMaterialId) return;
     
     if (!formData.text.trim()) {
       alert('Vui lòng nhập nội dung kết quả học tập');
@@ -125,7 +149,7 @@ const OutcomesManagement: React.FC = () => {
     const updatedCourses = courses.map(course => {
       if (course.id === selectedCourse.id) {
         const updatedMaterials = course.materials.map(material => {
-          if (material.id === selectedMaterial.id) {
+          if (material.id === selectedMaterialId) {
             if (editingItem) {
               // Update existing outcome
               return {
@@ -136,7 +160,7 @@ const OutcomesManagement: React.FC = () => {
               };
             } else {
               // Add new outcome
-              const newOutcome: Outcome = {
+              const newOutcome = {
                 id: Date.now(),
                 text: formData.text
               };
@@ -157,22 +181,18 @@ const OutcomesManagement: React.FC = () => {
     const updatedCourse = updatedCourses.find(c => c.id === selectedCourse.id);
     if (updatedCourse) {
       setSelectedCourse(updatedCourse);
-      const updatedMaterial = updatedCourse.materials.find(m => m.id === selectedMaterial.id);
-      if (updatedMaterial) {
-        setSelectedMaterial(updatedMaterial);
-      }
     }
     cancelForm();
   };
 
-  const handleDeleteOutcome = (outcomeId: number) => {
-    if (!selectedCourse || !selectedMaterial) return;
+  const handleDeleteOutcome = (outcomeId: number, materialId: number) => {
+    if (!selectedCourse) return;
     
     if (window.confirm('Bạn có chắc chắn muốn xóa kết quả học tập này?')) {
       const updatedCourses = courses.map(course => {
         if (course.id === selectedCourse.id) {
           const updatedMaterials = course.materials.map(material => {
-            if (material.id === selectedMaterial.id) {
+            if (material.id === materialId) {
               return {
                 ...material,
                 outcomes: material.outcomes.filter(outcome => outcome.id !== outcomeId)
@@ -189,16 +209,13 @@ const OutcomesManagement: React.FC = () => {
       const updatedCourse = updatedCourses.find(c => c.id === selectedCourse.id);
       if (updatedCourse) {
         setSelectedCourse(updatedCourse);
-        const updatedMaterial = updatedCourse.materials.find(m => m.id === selectedMaterial.id);
-        if (updatedMaterial) {
-          setSelectedMaterial(updatedMaterial);
-        }
       }
     }
   };
 
   const handleEdit = (outcome: Outcome) => {
     setEditingItem(outcome);
+    setSelectedMaterialId(outcome.materialId);
     setFormData({ text: outcome.text });
     setShowForm(true);
   };
@@ -207,7 +224,10 @@ const OutcomesManagement: React.FC = () => {
     setShowForm(false);
     setFormData({ text: '' });
     setEditingItem(null);
+    setSelectedMaterialId(null);
   };
+
+  const allOutcomes = getAllOutcomesForCourse();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
@@ -225,7 +245,7 @@ const OutcomesManagement: React.FC = () => {
             <div className="mb-6">
               <div className="flex items-center justify-between mb-3">
                 <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                  <BookOpen className="w-5 h-5 text-purple-600" />
+                  <Target className="w-5 h-5 text-purple-600" />
                   Chọn kỳ học
                 </label>
                 <span className="text-xs text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
@@ -306,60 +326,57 @@ const OutcomesManagement: React.FC = () => {
               
               {coursesForSemester.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {coursesForSemester.map((course) => (
-                    <button
-                      key={course.id}
-                      onClick={() => setSelectedCourse(course)}
-                      className={`group text-left p-5 rounded-xl border-2 transition-all duration-200 ${
-                        selectedCourse?.id === course.id
-                          ? 'border-purple-500 bg-gradient-to-br from-purple-50 to-pink-50 shadow-lg scale-105'
-                          : 'border-slate-200 bg-white hover:border-purple-300 hover:shadow-md hover:-translate-y-1'
-                      }`}
-                    >
-                      <div className="flex items-start gap-3 mb-3">
-                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${
+                  {coursesForSemester.map((course) => {
+                    const totalOutcomes = course.materials.reduce((sum, m) => sum + m.outcomes.length, 0);
+                    return (
+                      <button
+                        key={course.id}
+                        onClick={() => setSelectedCourse(course)}
+                        className={`group text-left p-5 rounded-xl border-2 transition-all duration-200 ${
                           selectedCourse?.id === course.id
-                            ? 'bg-purple-600 text-white shadow-lg'
-                            : 'bg-slate-100 text-slate-600 group-hover:bg-purple-100 group-hover:text-purple-600'
-                        }`}>
-                          <Target className="w-6 h-6" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className={`font-bold mb-1 line-clamp-2 ${
-                            selectedCourse?.id === course.id ? 'text-purple-900' : 'text-slate-800'
-                          }`}>
-                            {course.name}
-                          </h4>
-                          <p className="text-sm text-slate-500 font-medium">{course.code}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center justify-between pt-3 border-t border-slate-200">
-                        <div className="flex items-center gap-2 text-sm">
-                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                            ? 'border-purple-500 bg-gradient-to-br from-purple-50 to-pink-50 shadow-lg scale-105'
+                            : 'border-slate-200 bg-white hover:border-purple-300 hover:shadow-md hover:-translate-y-1'
+                        }`}
+                      >
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${
                             selectedCourse?.id === course.id
-                              ? 'bg-purple-100'
-                              : 'bg-slate-100 group-hover:bg-purple-50'
+                              ? 'bg-purple-600 text-white shadow-lg'
+                              : 'bg-slate-100 text-slate-600 group-hover:bg-purple-100 group-hover:text-purple-600'
                           }`}>
-                            <Target className={`w-4 h-4 ${
-                              selectedCourse?.id === course.id ? 'text-purple-600' : 'text-slate-600'
-                            }`} />
+                            <Target className="w-6 h-6" />
                           </div>
-                          <span className={`font-semibold ${
-                            selectedCourse?.id === course.id ? 'text-purple-700' : 'text-slate-600'
-                          }`}>
-                            {course.materials.length} tài liệu
-                          </span>
+                          <div className="flex-1 min-w-0">
+                            <h4 className={`font-bold mb-1 line-clamp-2 ${
+                              selectedCourse?.id === course.id ? 'text-purple-900' : 'text-slate-800'
+                            }`}>
+                              {course.name}
+                            </h4>
+                            <p className="text-sm text-slate-500 font-medium">{course.code}</p>
+                          </div>
                         </div>
-                        {selectedCourse?.id === course.id && (
-                          <div className="flex items-center gap-1 text-purple-600 text-xs font-semibold">
-                            <div className="w-2 h-2 bg-purple-600 rounded-full animate-pulse" />
-                            Đang chọn
+                        
+                        <div className="flex items-center justify-between pt-3 border-t border-slate-200">
+                          <div className="flex items-center gap-2 text-sm flex-wrap">
+                            <span className={`px-2 py-1 rounded-lg font-semibold ${
+                              selectedCourse?.id === course.id
+                                ? 'bg-purple-100 text-purple-700'
+                                : 'bg-slate-100 text-slate-600'
+                            }`}>
+                              {totalOutcomes} kết quả
+                            </span>
+                            {/* <span className="text-slate-400">•</span>
+                            <span className="text-slate-600">{course.materials.length} tài liệu</span> */}
                           </div>
-                        )}
-                      </div>
-                    </button>
-                  ))}
+                          {selectedCourse?.id === course.id && (
+                            <div className="flex items-center gap-1 text-purple-600 text-xs font-semibold">
+                              <div className="w-2 h-2 bg-purple-600 rounded-full animate-pulse" />
+                            </div>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="text-center py-12 text-slate-500 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200">
@@ -372,172 +389,143 @@ const OutcomesManagement: React.FC = () => {
           </div>
         </div>
 
-        {/* Materials List */}
-        {selectedCourse && !selectedMaterial && (
+        {/* Outcomes List by Course */}
+        {selectedCourse && (
           <div className="bg-white rounded-xl shadow-lg border border-slate-200 mt-6">
             <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-slate-800">Danh sách tài liệu - {selectedCourse.name}</h2>
-                <div className="text-sm text-slate-500 bg-slate-100 px-4 py-2 rounded-lg">
-                  {selectedCourse.materials.length} tài liệu
-                </div>
-              </div>
-
-              {selectedCourse.materials.length > 0 ? (
-                <div className="space-y-3">
-                  {selectedCourse.materials.map(material => (
-                    <button
-                      key={material.id}
-                      onClick={() => setSelectedMaterial(material)}
-                      className="w-full flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-purple-50 hover:border-purple-300 border-2 border-transparent transition-all group"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition">
-                          <FileText className="w-6 h-6 text-purple-600" />
-                        </div>
-                        <div className="text-left">
-                          <p className="font-semibold text-slate-800 group-hover:text-purple-700">{material.name}</p>
-                          <p className="text-sm text-slate-500">{material.type} • {material.size} • {material.date}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-2 px-3 py-1 bg-purple-100 rounded-lg">
-                          <Target className="w-4 h-4 text-purple-600" />
-                          <span className="text-sm font-semibold text-purple-700">
-                            {material.outcomes.length} kết quả
-                          </span>
-                        </div>
-                        <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-purple-600 transition" />
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12 text-slate-500">
-                  <FileText className="w-16 h-16 mx-auto mb-3 text-slate-300" />
-                  <p className="text-lg font-semibold">Chưa có tài liệu nào cho môn học này</p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Material Outcomes Detail */}
-        {selectedCourse && selectedMaterial && (
-          <div className="bg-white rounded-xl shadow-lg border border-slate-200 mt-6">
-            <div className="p-6">
-              {/* Header with back button */}
-              <div className="flex items-center gap-3 mb-6">
-                <button
-                  onClick={() => setSelectedMaterial(null)}
-                  className="p-2 hover:bg-slate-100 rounded-lg transition"
-                >
-                  <ChevronRight className="w-5 h-5 text-slate-600 rotate-180" />
-                </button>
-                <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-slate-800">Kết quả Học tập</h2>
-                  <p className="text-slate-600 text-sm mt-1">
-                    <span className="font-semibold">{selectedMaterial.name}</span> • {selectedCourse.name}
-                  </p>
-                </div>
-              </div>
-
-              {/* Material Info Card */}
-              <div className="mb-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border-2 border-purple-200 flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <FileText className="w-6 h-6 text-purple-600" />
-                    <h3 className="font-bold text-slate-800 text-lg">{selectedMaterial.name}</h3>
+              {/* Header */}
+              <div className="mb-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                      <Target className="w-6 h-6 text-purple-600" />
+                      Kết quả Học tập - {selectedCourse.name}
+                    </h2>
+                    <p className="text-sm text-slate-600 mt-1">{selectedCourse.code}</p>
                   </div>
-                  <div className="flex items-center gap-3 text-sm text-slate-600 ml-9">
-                    <span>{selectedMaterial.type}</span>
-                    <span>•</span>
-                    <span>{selectedMaterial.size}</span>
-                    <span>•</span>
-                    <span>{selectedMaterial.date}</span>
-                    <span>•</span>
-                    <span className="font-semibold text-purple-600">
-                      {selectedMaterial.outcomes.length} kết quả
+                  <div className="flex items-center gap-3">
+                    <span className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg text-sm font-semibold">
+                      {getTotalOutcomesCount()} kết quả
                     </span>
+                    {!showForm && (
+                      <button
+                        onClick={() => setShowForm(true)}
+                        className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-semibold shadow-sm hover:shadow-md"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Thêm Kết quả
+                      </button>
+                    )}
                   </div>
                 </div>
-
-                {/* Add Outcome Button */}
-                {!showForm && !editingItem && (
-                  <button 
-                    onClick={() => setShowForm(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-semibold whitespace-nowrap"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Thêm Kết Quả
-                  </button>
-                )}
               </div>
 
               {/* Add/Edit Form */}
               {showForm && (
-                <div className="mb-6 p-4 bg-purple-50 rounded-lg border-2 border-purple-200">
-                  <h3 className="font-semibold text-slate-800 mb-3">
-                    {editingItem ? 'Chỉnh sửa Kết quả Học tập' : 'Thêm Kết quả Học tập mới'}
+                <div className="mb-6 p-5 bg-purple-50 rounded-lg border-2 border-purple-200">
+                  <h3 className="font-bold text-slate-800 mb-4 text-lg">
+                    {editingItem ? '✏️ Chỉnh sửa kết quả học tập' : '➕ Thêm kết quả học tập mới'}
                   </h3>
-                  <textarea
-                    placeholder="Kết quả học tập mong đợi"
-                    value={formData.text}
-                    onChange={(e) => setFormData({ text: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg mb-3 h-20 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  />
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={handleAddOutcome}
-                      className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
-                    >
-                      <Check className="w-4 h-4" />
-                      {editingItem ? 'Cập nhật' : 'Lưu'}
-                    </button>
-                    <button 
-                      onClick={cancelForm}
-                      className="flex items-center gap-2 px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition"
-                    >
-                      <X className="w-4 h-4" />
-                      Hủy
-                    </button>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">
+                        Chọn tài liệu *
+                      </label>
+                      <select
+                        value={selectedMaterialId || ''}
+                        onChange={(e) => setSelectedMaterialId(Number(e.target.value))}
+                        className="w-full px-4 py-2.5 border-2 border-purple-200 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none"
+                        disabled={!!editingItem}
+                      >
+                        <option value="">-- Chọn tài liệu --</option>
+                        {selectedCourse.materials.map(material => (
+                          <option key={material.id} value={material.id}>
+                            {material.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">
+                        Nội dung kết quả học tập *
+                      </label>
+                      <textarea
+                        value={formData.text}
+                        onChange={(e) => setFormData({ text: e.target.value })}
+                        placeholder="Nhập nội dung kết quả học tập mong đợi..."
+                        rows={4}
+                        className="w-full px-4 py-2.5 border-2 border-purple-200 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none resize-none"
+                      />
+                    </div>
+
+                    <div className="flex gap-3 pt-2">
+                      <button
+                        onClick={handleAddOutcome}
+                        disabled={!formData.text.trim() || !selectedMaterialId}
+                        className="flex items-center gap-2 px-5 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors font-semibold shadow-sm hover:shadow-md"
+                      >
+                        <Check className="w-4 h-4" />
+                        {editingItem ? 'Cập nhật' : 'Thêm kết quả'}
+                      </button>
+                      <button
+                        onClick={cancelForm}
+                        className="flex items-center gap-2 px-5 py-2.5 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors font-semibold"
+                      >
+                        <X className="w-4 h-4" />
+                        Hủy
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
 
               {/* Outcomes List */}
-              {selectedMaterial.outcomes.length > 0 ? (
-                <div className="space-y-2">
-                  {selectedMaterial.outcomes.map((outcome, idx) => (
-                    <div key={outcome.id} className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition border border-slate-200">
-                      <span className="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
-                        {idx + 1}
-                      </span>
-                      <p className="flex-1 text-slate-700 mt-1">{outcome.text}</p>
-                      <div className="flex gap-1">
-                        <button 
-                          onClick={() => handleEdit(outcome)}
-                          className="p-2 text-slate-600 hover:bg-slate-200 rounded transition"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button 
-                          onClick={() => handleDeleteOutcome(outcome.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded transition"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+              <div>
+                {allOutcomes.length === 0 ? (
+                  <div className="text-center py-16 text-slate-500 bg-slate-50 rounded-xl">
+                    <Target className="w-16 h-16 mx-auto mb-4 text-slate-300" />
+                    <p className="text-lg font-semibold mb-1">Chưa có kết quả học tập nào</p>
+                    <p className="text-sm">Nhấn nút "Thêm Kết quả" để bắt đầu</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {allOutcomes.map((outcome, index) => (
+                      <div
+                        key={`${outcome.materialId}-${outcome.id}`}
+                        className="flex items-center gap-3 p-3 border border-slate-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-all bg-white group"
+                      >
+                        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-purple-200 transition-colors">
+                          <span className="font-bold text-purple-600">{index + 1}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-slate-800 truncate">{outcome.text}</p>
+                        </div>
+                        {/* <span className="text-xs text-slate-500 px-2 py-1 bg-slate-100 rounded flex-shrink-0">
+                          📄 {outcome.materialName}
+                        </span> */}
+                        <div className="flex gap-1 flex-shrink-0">
+                          <button
+                            onClick={() => handleEdit(outcome)}
+                            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                            title="Chỉnh sửa"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteOutcome(outcome.id, outcome.materialId)}
+                            className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors"
+                            title="Xóa"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12 text-slate-500 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200">
-                  <Target className="w-16 h-16 mx-auto mb-3 text-slate-300" />
-                  <p className="text-lg font-semibold">Chưa có Kết quả Học tập cho tài liệu này</p>
-                  <p className="text-sm mt-1">Nhấn "Thêm Kết quả" để thêm kết quả học tập mới</p>
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}

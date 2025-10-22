@@ -107,7 +107,7 @@ const FAQManagement = () => {
           <div className="mb-8">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Quản lý FAQ</h1>
+                <h1 className="text-3xl font-bold text-gray-900">Quản lý câu hỏi thường gặp</h1>
                 <p className="mt-2 text-sm text-gray-600">
                   Quản lý câu hỏi thường gặp và câu trả lời cho sinh viên
                 </p>
@@ -119,7 +119,7 @@ const FAQManagement = () => {
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
-                Thêm FAQ mới
+                Thêm câu hỏi mới
               </button>
             </div>
           </div>
