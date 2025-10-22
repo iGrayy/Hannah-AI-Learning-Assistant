@@ -8,7 +8,7 @@ export const mockFAQData = [
     tags: ["OOP", "Java", "Interface", "Abstract"],
     usageCount: 45,
     createdAt: "2024-01-15T10:30:00Z",
-    updatedBy: "TS. Nguyễn Văn A"
+    updatedBy: "Nguyễn Văn A"
   },
   {
     id: 2,
@@ -18,7 +18,7 @@ export const mockFAQData = [
     tags: ["Design Pattern", "Singleton", "Java"],
     usageCount: 38,
     createdAt: "2024-01-20T14:15:00Z",
-    updatedBy: "TS. Trần Thị B"
+    updatedBy: "Trần Thị B"
   },
   {
     id: 3,
@@ -28,7 +28,7 @@ export const mockFAQData = [
     tags: ["Design Pattern", "Observer", "Behavioral"],
     usageCount: 29,
     createdAt: "2024-02-01T09:45:00Z",
-    updatedBy: "TS. Lê Văn C"
+    updatedBy: "Lê Văn C"
   },
   {
     id: 4,
@@ -38,7 +38,7 @@ export const mockFAQData = [
     tags: ["Testing", "Unit Test", "Quality"],
     usageCount: 52,
     createdAt: "2024-02-10T11:20:00Z",
-    updatedBy: "TS. Phạm Thị D"
+    updatedBy: "Phạm Thị D"
   },
   {
     id: 5,
@@ -48,7 +48,7 @@ export const mockFAQData = [
     tags: ["Database", "Normalization", "Design"],
     usageCount: 41,
     createdAt: "2024-02-15T16:30:00Z",
-    updatedBy: "TS. Hoàng Văn E"
+    updatedBy: "Hoàng Văn E"
   },
   {
     id: 6,
@@ -58,7 +58,7 @@ export const mockFAQData = [
     tags: ["OOP", "SOLID", "Principles"],
     usageCount: 67,
     createdAt: "2024-02-20T13:45:00Z",
-    updatedBy: "TS. Nguyễn Văn A"
+    updatedBy: "Nguyễn Văn A"
   },
   {
     id: 7,
@@ -68,7 +68,7 @@ export const mockFAQData = [
     tags: ["Agile", "Waterfall", "Methodology"],
     usageCount: 33,
     createdAt: "2024-02-25T10:15:00Z",
-    updatedBy: "TS. Trần Thị B"
+    updatedBy: "Trần Thị B"
   },
   {
     id: 8,
@@ -78,7 +78,7 @@ export const mockFAQData = [
     tags: ["REST", "API", "Web Development"],
     usageCount: 44,
     createdAt: "2024-03-01T15:20:00Z",
-    updatedBy: "TS. Lê Văn C"
+    updatedBy: "Lê Văn C"
   },
   {
     id: 9,
@@ -88,7 +88,7 @@ export const mockFAQData = [
     tags: ["Git", "Version Control", "Workflow"],
     usageCount: 28,
     createdAt: "2024-03-05T12:30:00Z",
-    updatedBy: "TS. Phạm Thị D"
+    updatedBy: "Phạm Thị D"
   },
   {
     id: 10,
@@ -98,7 +98,7 @@ export const mockFAQData = [
     tags: ["Architecture", "Microservices", "Monolithic"],
     usageCount: 36,
     createdAt: "2024-03-10T14:45:00Z",
-    updatedBy: "TS. Hoàng Văn E"
+    updatedBy: "Hoàng Văn E"
   }
 ];
 
@@ -165,7 +165,7 @@ export const mockFlaggedConversations = [
     status: "Đang xử lý",
     priority: "Trung bình",
     flaggedAt: "2024-10-17T09:30:00Z",
-    assignedTo: "TS. Nguyễn Văn A",
+    assignedTo: "Nguyễn Văn A",
     messages: [
       {
         id: "M3",
@@ -199,7 +199,7 @@ export const mockFlaggedConversations = [
         action: "Phân công",
         user: "Admin",
         timestamp: "2024-10-17T09:45:00Z",
-        details: "Phân công cho TS. Nguyễn Văn A"
+        details: "Phân công cho Nguyễn Văn A"
       }
     ]
   },
@@ -218,7 +218,7 @@ export const mockFlaggedConversations = [
     status: "Đã giải quyết",
     priority: "Thấp",
     flaggedAt: "2024-10-16T14:20:00Z",
-    assignedTo: "TS. Hoàng Văn E",
+    assignedTo: "Hoàng Văn E",
     messages: [
       {
         id: "M5",
@@ -237,7 +237,7 @@ export const mockFlaggedConversations = [
       },
       {
         id: "M7",
-        author: { name: "TS. Hoàng Văn E", role: "faculty" },
+        author: { name: "Hoàng Văn E", role: "faculty" },
         content: "Để bổ sung thêm, còn có CROSS JOIN và SELF JOIN nữa nhé em.",
         timestamp: "2024-10-16T15:30:00Z",
         sourceLabel: "Giảng viên chỉnh sửa"
@@ -259,17 +259,17 @@ export const mockFlaggedConversations = [
         action: "Phân công",
         user: "Admin",
         timestamp: "2024-10-16T14:25:00Z",
-        details: "Phân công cho TS. Hoàng Văn E"
+        details: "Phân công cho Hoàng Văn E"
       },
       {
         action: "Trả lời",
-        user: "TS. Hoàng Văn E",
+        user: "Hoàng Văn E",
         timestamp: "2024-10-16T15:30:00Z",
         details: "Đã bổ sung thông tin về CROSS JOIN và SELF JOIN"
       },
       {
         action: "Đánh dấu đã giải quyết",
-        user: "TS. Hoàng Văn E",
+        user: "Hoàng Văn E",
         timestamp: "2024-10-16T15:35:00Z",
         details: "Đã cung cấp thông tin đầy đủ"
       }
@@ -293,7 +293,7 @@ export const mockMaterialsData = {
               fileName: "Bai_giang_CNPM_Chuong1.pdf",
               size: "2.5 MB",
               uploadedAt: "2024-09-01T08:00:00Z",
-              uploadedBy: "TS. Nguyễn Văn A",
+              uploadedBy: "Nguyễn Văn A",
               url: "#"
             },
             {
@@ -301,7 +301,7 @@ export const mockMaterialsData = {
               fileName: "Design_Patterns_Overview.pdf",
               size: "4.2 MB",
               uploadedAt: "2024-09-05T10:30:00Z",
-              uploadedBy: "TS. Trần Thị B",
+              uploadedBy: "Trần Thị B",
               url: "#"
             },
             {
@@ -309,7 +309,7 @@ export const mockMaterialsData = {
               fileName: "Software_Architecture_Principles.pdf",
               size: "3.8 MB",
               uploadedAt: "2024-09-10T14:15:00Z",
-              uploadedBy: "TS. Nguyễn Văn A",
+              uploadedBy: "Nguyễn Văn A",
               url: "#"
             }
           ]
@@ -324,7 +324,7 @@ export const mockMaterialsData = {
               fileName: "OOP_Fundamentals.pdf",
               size: "3.1 MB",
               uploadedAt: "2024-09-02T09:00:00Z",
-              uploadedBy: "TS. Lê Văn C",
+              uploadedBy: "Lê Văn C",
               url: "#"
             },
             {
@@ -332,7 +332,7 @@ export const mockMaterialsData = {
               fileName: "Java_Advanced_Topics.pdf",
               size: "5.7 MB",
               uploadedAt: "2024-09-08T11:45:00Z",
-              uploadedBy: "TS. Lê Văn C",
+              uploadedBy: "Lê Văn C",
               url: "#"
             }
           ]
@@ -347,7 +347,7 @@ export const mockMaterialsData = {
               fileName: "Database_Design_Fundamentals.pdf",
               size: "4.5 MB",
               uploadedAt: "2024-09-03T13:20:00Z",
-              uploadedBy: "TS. Hoàng Văn E",
+              uploadedBy: "Hoàng Văn E",
               url: "#"
             },
             {
@@ -355,7 +355,7 @@ export const mockMaterialsData = {
               fileName: "SQL_Advanced_Queries.pdf",
               size: "2.9 MB",
               uploadedAt: "2024-09-12T16:30:00Z",
-              uploadedBy: "TS. Hoàng Văn E",
+              uploadedBy: "Hoàng Văn E",
               url: "#"
             }
           ]
@@ -376,7 +376,7 @@ export const mockMaterialsData = {
               fileName: "Web_Development_Basics.pdf",
               size: "3.3 MB",
               uploadedAt: "2024-02-01T10:00:00Z",
-              uploadedBy: "TS. Phạm Thị D",
+              uploadedBy: "Phạm Thị D",
               url: "#"
             },
             {
@@ -384,7 +384,7 @@ export const mockMaterialsData = {
               fileName: "React_Advanced_Patterns.pdf",
               size: "4.1 MB",
               uploadedAt: "2024-02-15T14:20:00Z",
-              uploadedBy: "TS. Phạm Thị D",
+              uploadedBy: "Phạm Thị D",
               url: "#"
             }
           ]
@@ -854,11 +854,11 @@ export const mockLearningOutcomesData = [
 
 // Faculty members data
 export const mockFacultyMembers = [
-  { id: "F001", name: "TS. Nguyễn Văn A" },
-  { id: "F002", name: "TS. Trần Thị B" },
-  { id: "F003", name: "TS. Lê Văn C" },
-  { id: "F004", name: "TS. Phạm Thị D" },
-  { id: "F005", name: "TS. Hoàng Văn E" }
+  { id: "F001", name: "Nguyễn Văn A" },
+  { id: "F002", name: "Trần Thị B" },
+  { id: "F003", name: "Lê Văn C" },
+  { id: "F004", name: "Phạm Thị D" },
+  { id: "F005", name: "Hoàng Văn E" }
 ];
 
 // Course list

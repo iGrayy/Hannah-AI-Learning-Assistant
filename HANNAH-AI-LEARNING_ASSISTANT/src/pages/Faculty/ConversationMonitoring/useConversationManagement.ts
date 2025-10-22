@@ -68,6 +68,7 @@ interface Filters {
   dateFrom: string;
   dateTo: string;
   course: string;
+  sortBy: string;
 }
 
 export const useConversationManagement = () => {
@@ -81,7 +82,8 @@ export const useConversationManagement = () => {
     search: '',
     dateFrom: '',
     dateTo: '',
-    course: ''
+    course: '',
+    sortBy: 'desc'
   });
 
   useEffect(() => {
@@ -128,7 +130,15 @@ export const useConversationManagement = () => {
         facultyId: user?.id,
         facultyName: user?.name
       });
-      const transformed = response.data.map(transformConversation);
+      let transformed = response.data.map(transformConversation);
+      
+      // Sort by timestamp
+      transformed.sort((a, b) => {
+        const timeA = new Date(a.timestamp).getTime();
+        const timeB = new Date(b.timestamp).getTime();
+        return filters.sortBy === 'desc' ? timeB - timeA : timeA - timeB;
+      });
+      
       setConversations(transformed);
     } catch (error) {
       showNotification('Lỗi khi tải danh sách cuộc hội thoại', 'error');
@@ -191,7 +201,8 @@ export const useConversationManagement = () => {
       search: '',
       dateFrom: '',
       dateTo: '',
-      course: ''
+      course: '',
+      sortBy: 'desc'
     });
   };
 

@@ -5,7 +5,7 @@ const AppContext = createContext<any>(undefined);
 
 const initialState = {
   user: {
-    name: "TS. Nguyễn Văn A",
+    name: "Nguyễn Văn A",
     avatar: "A",
     role: "faculty"
   },

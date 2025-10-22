@@ -11,9 +11,13 @@ import SystemSettings from './pages/Admin/SystemSettings'
 import CourseManagement from './pages/Admin/CourseManagement/CourseManagement'
 import FacultyLayout from './pages/Faculty/FacultyLayout'
 import FAQManagement from './pages/Faculty/FAQ/FAQManagement'
-import KnowledgeManagement from './pages/Faculty/KnowledgeManagement'
 import QuestionAnalytics from './pages/Faculty/QuestionAnalytics/QuestionAnalytics'
+import QuestionStatistics from './pages/Faculty/QuestionStatistics/QuestionStatistics'
 import ConversationMonitoring from './pages/Faculty/ConversationMonitoring/ConversationMonitoring'
+import MaterialsLayout from './pages/Faculty/MaterialsManagement/MaterialsLayout'
+import OutcomesManagement from './pages/Faculty/MaterialsManagement/OutcomesManagement'
+import ChallengesManagement from './pages/Faculty/MaterialsManagement/ChallengesManagement'
+import DocumentsManagement from './pages/Faculty/MaterialsManagement/DocumentsManagement'
 
 function App() {
   return (
@@ -38,8 +42,14 @@ function App() {
         <Route index element={<FAQManagement />} />
         <Route path="faq" element={<FAQManagement />} />
         <Route path="conversations" element={<ConversationMonitoring />} />
-        <Route path="materials" element={<KnowledgeManagement />} />
+        <Route path="materials" element={<MaterialsLayout />}>
+          <Route index element={<DocumentsManagement />} />
+          <Route path="documents" element={<DocumentsManagement />} />
+          <Route path="outcomes" element={<OutcomesManagement />} />
+          <Route path="challenges" element={<ChallengesManagement />} />
+        </Route>
         <Route path="analytics" element={<QuestionAnalytics />} />
+        <Route path="questions" element={<QuestionStatistics />} />
       </Route>
     </Routes>
   )
