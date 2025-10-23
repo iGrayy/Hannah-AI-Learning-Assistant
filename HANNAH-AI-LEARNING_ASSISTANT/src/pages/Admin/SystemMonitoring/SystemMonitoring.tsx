@@ -1,277 +1,228 @@
-import React, { useState } from 'react';
-import { Info, TrendingUp, AlertCircle, Activity, BarChart3, CheckCircle, XCircle, Clock } from 'lucide-react';
-import './SystemMonitoring.css';
+// src/pages/SystemMonitoring.tsx
+import React from 'react';
+import {
+  useSystemMetrics,
+  useDatabaseMetrics,
+  useApplicationMetrics,
+  useGeminiMetrics,
+  useResponseSourceDistribution,
+} from '../../../hooks/useMetrics';
+import { InfoBox } from '../../../components/Admin/InfoBox';
+import { Card } from '../../../components/Admin/Card';
+import { MetricRow } from '../../../components/Admin/MetricRow';
+import { Badge } from 'lucide-react';
 
-interface LogEntry {
-  id: string;
-  timestamp: string;
-  endpoint: string;
-  method: string;
-  status: number;
-  responseTime: number;
-  project: string;
-}
+export const SystemMonitoring: React.FC = () => {
+  const { metrics: systemMetrics, loading: systemLoading } = useSystemMetrics();
+  const { metrics: dbMetrics, loading: dbLoading } = useDatabaseMetrics();
+  const { metrics: appMetrics, loading: appLoading } = useApplicationMetrics();
+  const { metrics: geminiMetrics, loading: geminiLoading } = useGeminiMetrics();
+  const { distribution, loading: distLoading } = useResponseSourceDistribution();
 
-const SystemMonitoring: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'usage' | 'rateLimit' | 'billing'>('usage');
-  const [selectedProject, setSelectedProject] = useState('test');
-  const [timeRange, setTimeRange] = useState('28Days');
-
-  // Mock log data
-  const [logs] = useState<LogEntry[]>([
-    {
-      id: '1',
-      timestamp: '2025-10-19 14:32:15',
-      endpoint: '/api/v1/generate',
-      method: 'POST',
-      status: 200,
-      responseTime: 245,
-      project: 'Test Environment'
-    },
-    {
-      id: '2',
-      timestamp: '2025-10-19 14:31:42',
-      endpoint: '/api/v1/models',
-      method: 'GET',
-      status: 200,
-      responseTime: 123,
-      project: 'Test Environment'
-    },
-    {
-      id: '3',
-      timestamp: '2025-10-19 14:30:18',
-      endpoint: '/api/v1/generate',
-      method: 'POST',
-      status: 429,
-      responseTime: 89,
-      project: 'Production'
-    },
-    {
-      id: '4',
-      timestamp: '2025-10-19 14:29:55',
-      endpoint: '/api/v1/embeddings',
-      method: 'POST',
-      status: 500,
-      responseTime: 1024,
-      project: 'Test Environment'
-    },
-    {
-      id: '5',
-      timestamp: '2025-10-19 14:28:33',
-      endpoint: '/api/v1/generate',
-      method: 'POST',
-      status: 200,
-      responseTime: 198,
-      project: 'Development'
-    }
-  ]);
-
-  const getStatusBadge = (status: number) => {
-    if (status >= 200 && status < 300) {
-      return <span className="status-badge success"><CheckCircle size={14} /> {status}</span>;
-    } else if (status >= 400 && status < 500) {
-      return <span className="status-badge warning"><AlertCircle size={14} /> {status}</span>;
-    } else if (status >= 500) {
-      return <span className="status-badge error"><XCircle size={14} /> {status}</span>;
-    }
-    return <span className="status-badge">{status}</span>;
-  };
-
-  const getMethodBadge = (method: string) => {
-    const methodClass = method.toLowerCase();
-    return <span className={`method-badge ${methodClass}`}>{method}</span>;
-  };
+  if (systemLoading || dbLoading || appLoading || geminiLoading || distLoading) {
+    return <div>Loading monitoring data...</div>;
+  }
 
   return (
-    <div className="system-monitoring">
-      {/* <div className="monitoring-header">
-        <div className="header-content">
-          <div className="header-icon">
-            <Activity size={32} strokeWidth={2} />
-          </div>
-          <div className="header-text">
-            <h1>Gemini API Usage</h1>
-            <p className="header-subtitle">Monitor your API usage and performance metrics</p>
-          </div>
-        </div>
-        <span className="tier-badge">
-          <span className="badge-dot"></span>
-          Free tier
-        </span>
-      </div> */}
+    <div className="page-content active">
+      <h2 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '24px' }}>
+        System Monitoring
+      </h2>
 
-      {/* <div className="monitoring-tabs">
-        <button 
-          className={`tab ${activeTab === 'usage' ? 'active' : ''}`}
-          onClick={() => setActiveTab('usage')}
+      <InfoBox>
+        <strong>Metrics Source:</strong> All data tracked from FastAPI backend using psutil, 
+        database connections, and application logs.
+      </InfoBox>
+
+      {/* Backend System Performance */}
+      {systemMetrics && (
+        <Card
+          title="🖥️ Backend System Performance (FastAPI Server)"
+          action={<Badge type="success">✅ Full Access</Badge>}
         >
-          <TrendingUp size={16} />
-          Usage
-        </button>
-        <button 
-          className={`tab ${activeTab === 'rateLimit' ? 'active' : ''}`}
-          onClick={() => setActiveTab('rateLimit')}
+          <MetricRow
+            label="CPU Usage (psutil.cpu_percent)"
+            value={`${systemMetrics.cpu}%`}
+            progress={{ value: systemMetrics.cpu, max: 100, color: 'primary' }}
+          />
+          <MetricRow
+            label="Memory Usage (psutil.virtual_memory)"
+            value={`${systemMetrics.memory.percent}% (${(systemMetrics.memory.used / 1024 / 1024 / 1024).toFixed(1)} GB / ${(systemMetrics.memory.total / 1024 / 1024 / 1024).toFixed(1)} GB)`}
+            progress={{ value: systemMetrics.memory.percent, max: 100, color: 'warning' }}
+          />
+          <MetricRow
+            label="Disk Usage (psutil.disk_usage)"
+            value={`${systemMetrics.disk.percent}% (${(systemMetrics.disk.used / 1024 / 1024 / 1024).toFixed(0)} GB / ${(systemMetrics.disk.total / 1024 / 1024 / 1024).toFixed(0)} GB)`}
+            progress={{ value: systemMetrics.disk.percent, max: 100, color: 'success' }}
+          />
+          <MetricRow
+            label="Server Uptime"
+            value={systemMetrics.uptime}
+          />
+        </Card>
+      )}
+
+      {/* Database Performance */}
+      {dbMetrics && (
+        <Card
+          title="🗄️ Database Performance"
+          action={<Badge type="success">✅ Full Access</Badge>}
+          className="mt-24"
         >
-          <BarChart3 size={16} />
-          Rate Limit
-        </button>
-        <button 
-          className={`tab ${activeTab === 'billing' ? 'active' : ''}`}
-          onClick={() => setActiveTab('billing')}
+          <h4 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px', color: 'var(--primary-color)' }}>
+            PostgreSQL (Structured Data)
+          </h4>
+          <MetricRow
+            label="Active Connections"
+            value={`${dbMetrics.postgresql.activeConnections} / ${dbMetrics.postgresql.maxConnections}`}
+          />
+          <MetricRow
+            label="Average Query Time"
+            value={`${dbMetrics.postgresql.avgQueryTime}ms`}
+          />
+          <MetricRow
+            label="Database Size"
+            value={dbMetrics.postgresql.size}
+          />
+
+          <h4 style={{ fontSize: '16px', fontWeight: 600, margin: '24px 0 16px', color: 'var(--success-color)' }}>
+            MongoDB (Conversation Logs)
+          </h4>
+          <MetricRow
+            label="Active Connections"
+            value={`${dbMetrics.mongodb.activeConnections} / ${dbMetrics.mongodb.maxConnections}`}
+          />
+          <MetricRow
+            label="Total Conversations"
+            value={dbMetrics.mongodb.totalConversations.toLocaleString()}
+          />
+          <MetricRow
+            label="Collection Size"
+            value={dbMetrics.mongodb.size}
+          />
+
+          <h4 style={{ fontSize: '16px', fontWeight: 600, margin: '24px 0 16px', color: 'var(--info-color)' }}>
+            Elasticsearch (Knowledge Base)
+          </h4>
+          <MetricRow
+            label="Indexed Documents"
+            value={dbMetrics.elasticsearch.indexedDocuments.toLocaleString()}
+          />
+          <MetricRow
+            label="Average Search Time"
+            value={`${dbMetrics.elasticsearch.avgSearchTime}ms`}
+          />
+          <MetricRow
+            label="Index Size"
+            value={dbMetrics.elasticsearch.indexSize}
+          />
+        </Card>
+      )}
+
+      {/* Application Metrics */}
+      {appMetrics && (
+        <Card
+          title="📊 Application Metrics (Backend Tracking)"
+          action={<Badge type="success">✅ Full Access</Badge>}
+          className="mt-24"
         >
-          <Activity size={16} />
-          Billing
-        </button>
-      </div> */}
+          <MetricRow
+            label="Active WebSocket Connections"
+            value={appMetrics.activeWebSocketConnections}
+          />
+          <MetricRow
+            label="Requests/Minute (Current)"
+            value={appMetrics.requestsPerMinute}
+          />
+          <MetricRow
+            label="Requests Today"
+            value={appMetrics.requestsToday.toLocaleString()}
+          />
+          <MetricRow
+            label="Cache Hit Rate"
+            value={`${appMetrics.cacheHitRate}%`}
+          />
+          <MetricRow
+            label="Avg Backend Processing Time"
+            value={`${appMetrics.avgBackendProcessingTime}s`}
+          />
+        </Card>
+      )}
 
-      <div className="monitoring-controls">
-        <div className="control-group">
-          <label>Tên</label>
-          <div className="select-wrapper">
-            <select
-              value={selectedProject}
-              onChange={(e) => setSelectedProject(e.target.value)}
-              className="select-input"
-            >
-              <option value="test">Môi trường Thử nghiệm</option>
-              <option value="production">Sản xuất</option>
-              <option value="development">Phát triển</option>
-            </select>
-          </div>
-        </div>
-        <div className="control-group">
-          <label>Khoảng thời gian</label>
-          <div className="select-wrapper">
-            <select
-              value={timeRange}
-              onChange={(e) => setTimeRange(e.target.value)}
-              className="select-input"
-            >
-              <option value="24Hours">24 giờ qua</option>
-              <option value="7Days">7 ngày qua</option>
-              <option value="28Days">28 ngày qua</option>
-              <option value="90Days">90 ngày qua</option>
-            </select>
-          </div>
-        </div>
-      </div>
+      {/* Gemini API Metrics */}
+      {/* {geminiMetrics && (
+        <Card
+          title="🤖 Gemini API Usage (Tracked from Backend)"
+          action={<Badge type="warning">⚠️ Limited - Measured from our side</Badge>}
+          className="mt-24"
+        >
+          <InfoBox>
+            These metrics are tracked by our backend when calling Gemini API. 
+            We cannot access Gemini's internal infrastructure metrics.
+          </InfoBox>
+          <MetricRow
+            label="API Calls Today"
+            value={geminiMetrics.apiCallsToday.toLocaleString()}
+          />
+          <MetricRow
+            label="Total Tokens Used Today"
+            value={geminiMetrics.totalTokensUsed.toLocaleString()}
+          />
+          <MetricRow
+            label="Avg Response Time (measured from backend)"
+            value={`${geminiMetrics.avgResponseTime}s`}
+          />
+          <MetricRow
+            label="Error Rate"
+            value={`${geminiMetrics.errorRate}%`}
+          />
+          <MetricRow
+            label="Slowest Response Today"
+            value={`${geminiMetrics.slowestResponse}s`}
+          />
+          <MetricRow
+            label="Fastest Response Today"
+            value={`${geminiMetrics.fastestResponse}s`}
+          />
+        </Card>
+      )} */}
 
-      <div className="overview-section">
-        <div className="overview-header">
-          <h2>Tổng quan</h2>
-          <button className="info-button">
-            <Info size={16} />
-          </button>
-        </div>
-
-        <div className="charts-grid">
-          <div className="chart-card">
-            <div className="chart-header">
-              <h3>Tổng số yêu cầu API mỗi ngày</h3>
-              <div className="chart-badge success">
-                <TrendingUp size={14} />
-                Hoạt động
-              </div>
-            </div>
-            <div className="chart-placeholder">
-              <div className="no-data-container">
-                <BarChart3 size={48} className="no-data-icon" />
-                <p className="no-data-title">Không có dữ liệu</p>
-                <p className="no-data-subtitle">Bắt đầu thực hiện yêu cầu API để xem thống kê sử dụng</p>
-              </div>
-            </div>
-            <div className="chart-footer">
-              <span className="footer-label">Chuỗi thời gian:</span>
-              <span className="footer-value">0</span>
-            </div>
-          </div>
-
-          <div className="chart-card">
-            <div className="chart-header">
-              <h3>Tổng số lỗi API mỗi ngày</h3>
-              <div className="chart-badge warning">
-                <AlertCircle size={14} />
-                Giám sát
-              </div>
-            </div>
-            <div className="chart-placeholder">
-              <div className="no-data-container">
-                <AlertCircle size={48} className="no-data-icon" />
-                <p className="no-data-title">Không có dữ liệu</p>
-                <p className="no-data-subtitle">Theo dõi lỗi sẽ xuất hiện ở đây khi có sẵn</p>
-              </div>
-            </div>
-            <div className="chart-footer">
-              <span className="footer-label">Chuỗi thời gian:</span>
-              <span className="footer-value">0</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Log Report Section */}
-      <div className="log-report-section">
-        <div className="log-header">
-          <h2>Nhật ký Yêu cầu API</h2>
-          <div className="log-controls">
-            <span className="log-count">{logs.length} yêu cầu</span>
-            <button className="refresh-btn">
-              <Activity size={16} />
-              Làm mới
-            </button>
-          </div>
-        </div>
-
-        <div className="log-table-container">
-          <table className="log-table">
-            <thead>
-              <tr>
-                <th>Thời gian</th>
-                <th>Phương thức</th>
-                <th>Điểm cuối</th>
-                <th>Trạng thái</th>
-                <th>Thời gian phản hồi</th>
-                <th>Dự án</th>
-              </tr>
-            </thead>
-            <tbody>
-              {logs.map((log) => (
-                <tr key={log.id}>
-                  <td>
-                    <span className="timestamp">{log.timestamp}</span>
-                  </td>
-                  <td>
-                    {getMethodBadge(log.method)}
-                  </td>
-                  <td>
-                    <code className="endpoint">{log.endpoint}</code>
-                  </td>
-                  <td>
-                    {getStatusBadge(log.status)}
-                  </td>
-                  <td>
-                    <span className="response-time">
-                      {log.responseTime}ms
-                    </span>
-                  </td>
-                  <td>
-                    <span className="project-name">{log.project}</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {logs.length === 0 && (
-          <div className="no-logs">
-            <Activity size={48} className="no-logs-icon" />
-            <p>Chưa có yêu cầu API nào được ghi nhận</p>
-          </div>
-        )}
-      </div>
+      {/* Response Source Distribution */}
+      {distribution && (
+        <Card
+          title="📈 Response Source Distribution (Today)"
+          action={<Badge type="success">✅ Tracked in Application</Badge>}
+          className="mt-24"
+        >
+          <MetricRow
+            label="Personal Knowledge Base (Faculty)"
+            value={`${distribution.personalKB.percentage}% (${distribution.personalKB.count} responses)`}
+            progress={{
+              value: distribution.personalKB.percentage,
+              max: 100,
+              color: 'success',
+            }}
+          />
+          <MetricRow
+            label="Global Knowledge Base"
+            value={`${distribution.globalKB.percentage}% (${distribution.globalKB.count} responses)`}
+            progress={{
+              value: distribution.globalKB.percentage,
+              max: 100,
+              color: 'primary',
+            }}
+          />
+          <MetricRow
+            label="Gemini API (Generated)"
+            value={`${distribution.geminiAPI.percentage}% (${distribution.geminiAPI.count} responses)`}
+            progress={{
+              value: distribution.geminiAPI.percentage,
+              max: 100,
+              color: 'warning',
+            }}
+          />
+        </Card>
+      )}
     </div>
   );
 };
-
-export default SystemMonitoring;

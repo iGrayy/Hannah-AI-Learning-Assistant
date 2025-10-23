@@ -5,9 +5,7 @@ import Chat from './pages/Chat/Chat'
 import Profile from './pages/Profile/Profile'
 import AdminLayout from './pages/Admin/AdminLayout'
 import UserManagement from './pages/Admin/UserManagement'
-import SystemMonitoring from './pages/Admin/SystemMonitoring/SystemMonitoring'
 import APIKeys from './pages/Admin/SystemMonitoring/APIKeys/APIKeys'
-import SystemSettings from './pages/Admin/SystemSettings'
 import CourseManagement from './pages/Admin/CourseManagement/CourseManagement'
 import FacultyLayout from './pages/Faculty/FacultyLayout'
 import FAQManagement from './pages/Faculty/FAQ/FAQManagement'
@@ -18,6 +16,9 @@ import MaterialsLayout from './pages/Faculty/MaterialsManagement/MaterialsLayout
 import OutcomesManagement from './pages/Faculty/MaterialsManagement/OutcomesManagement'
 import ChallengesManagement from './pages/Faculty/MaterialsManagement/ChallengesManagement'
 import DocumentsManagement from './pages/Faculty/MaterialsManagement/DocumentsManagement'
+import { Dashboard } from './pages/Admin/Dashboard'
+import { SystemMonitoring } from './pages/Admin/SystemMonitoring/SystemMonitoring'
+import { Configuration } from './pages/Admin/Configuration'
 
 function App() {
   return (
@@ -33,8 +34,10 @@ function App() {
         <Route path="user-management" element={<UserManagement />} />
         <Route path="system-monitoring/usage" element={<SystemMonitoring />} />
         <Route path="system-monitoring/api-keys" element={<APIKeys />} />
-        <Route path="system-settings" element={<SystemSettings />} />
+        <Route path="system-settings" element={<SystemMonitoring />} />
         <Route path="course-management" element={<CourseManagement />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path='configuration' element={<Configuration />} />
       </Route>
 
       {/* Faculty Routes */}

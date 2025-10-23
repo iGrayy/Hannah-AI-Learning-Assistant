@@ -20,6 +20,10 @@ const AdminSidebarContent: React.FC<AdminSidebarContentProps> = ({ isCollapsed =
   return (
     <div className="nav-section">
       {!isCollapsed && <span className="nav-section-title">MENU</span>}
+      <NavLink to="/admin/dashboard" className="sidebar-link" title={isCollapsed ? "Dashboard" : ""}>
+        <Users size={20} />
+        {!isCollapsed && <span className="sidebar-label">Dashboard</span>}
+      </NavLink>
       <NavLink to="/admin/user-management" className="sidebar-link" title={isCollapsed ? "Quản lý Người dùng" : ""}>
         <Users size={20} />
         {!isCollapsed && <span className="sidebar-label">Quản lý Người dùng</span>}
@@ -50,7 +54,10 @@ const AdminSidebarContent: React.FC<AdminSidebarContentProps> = ({ isCollapsed =
           </div>
         )}
       </div>
-
+      <NavLink to="/admin/configuration" className="sidebar-link" title={isCollapsed ? "Cấu hình Hệ thống" : ""}>
+        <Settings size={20} />
+        {!isCollapsed && <span className="sidebar-label">Cấu hình Hệ thống</span>}
+      </NavLink>
       <NavLink to="/admin/system-settings" className="sidebar-link" title={isCollapsed ? "Cài đặt Hệ thống" : ""}>
         <Settings size={20} />
         {!isCollapsed && <span className="sidebar-label">Cài đặt Hệ thống</span>}
