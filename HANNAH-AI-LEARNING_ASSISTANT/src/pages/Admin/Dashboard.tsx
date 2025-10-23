@@ -9,6 +9,7 @@ import { Button } from '../../components/Admin/Button';
 import { Badge } from '../../components/Admin/Badge';
 import { Modal } from '../../components/Admin/Modal';
 import { apiService } from '../../service/api';
+import './style.css';
 
 export const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);

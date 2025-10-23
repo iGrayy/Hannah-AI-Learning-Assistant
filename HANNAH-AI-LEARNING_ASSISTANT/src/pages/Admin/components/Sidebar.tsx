@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Users, BarChart2, Settings, Book, ChevronDown, ChevronRight, Activity, Key } from 'lucide-react';
 import ReusableSidebar from '../../../components/Sidebar/Sidebar';
+import '../style.css';
 
 interface AdminSidebarContentProps {
   isCollapsed?: boolean;
@@ -47,10 +48,10 @@ const AdminSidebarContent: React.FC<AdminSidebarContentProps> = ({ isCollapsed =
               <Key size={18} />
               <span>Khóa API</span>
             </NavLink>
-            <NavLink to="/admin/system-monitoring/usage" className="sidebar-sublink">
+            {/* <NavLink to="/admin/system-monitoring/usage" className="sidebar-sublink">
               <Activity size={18} />
               <span>Mức Sử Dụng</span>
-            </NavLink>
+            </NavLink> */}
           </div>
         )}
       </div>
