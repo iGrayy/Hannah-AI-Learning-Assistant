@@ -21,9 +21,9 @@ const AdminSidebarContent: React.FC<AdminSidebarContentProps> = ({ isCollapsed =
   return (
     <div className="nav-section">
       {!isCollapsed && <span className="nav-section-title">MENU</span>}
-      <NavLink to="/admin/dashboard" className="sidebar-link" title={isCollapsed ? "Dashboard" : ""}>
+      <NavLink to="/admin/dashboard" className="sidebar-link" title={isCollapsed ? "Tổng quan" : ""}>
         <Users size={20} />
-        {!isCollapsed && <span className="sidebar-label">Dashboard</span>}
+        {!isCollapsed && <span className="sidebar-label">Tổng quan</span>}
       </NavLink>
       <NavLink to="/admin/user-management" className="sidebar-link" title={isCollapsed ? "Quản lý Người dùng" : ""}>
         <Users size={20} />

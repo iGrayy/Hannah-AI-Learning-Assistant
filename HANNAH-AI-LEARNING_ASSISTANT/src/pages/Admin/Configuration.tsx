@@ -14,29 +14,29 @@ export const Configuration: React.FC = () => {
 
   const handleSaveConfig = async (section: keyof ConfigSettings, formData: any) => {
     const result = await updateConfig(section, formData);
-    
+
     if (result.success) {
-      setSuccessMessage(`${section} configuration saved successfully!`);
+      setSuccessMessage(`Cấu hình ${section} đã được lưu thành công!`);
       setTimeout(() => setSuccessMessage(null), 3000);
     } else {
-      setErrorMessage(result.error || 'Failed to save configuration');
+      setErrorMessage(result.error || 'Không thể lưu cấu hình');
       setTimeout(() => setErrorMessage(null), 5000);
     }
   };
 
   if (loading || !config) {
-    return <div>Loading configuration...</div>;
+    return <div>Đang tải cấu hình...</div>;
   }
 
   return (
     <div className="page-content active">
       <h2 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '24px' }}>
-        System Configuration
+        Cấu hình Hệ thống
       </h2>
 
       <InfoBox>
-        <strong>Configuration Options:</strong> Settings that can be modified through Admin UI. 
-        Changes are saved to PostgreSQL config table.
+        <strong>Tùy chọn Cấu hình:</strong> Các cài đặt có thể được chỉnh sửa thông qua giao diện quản trị.
+        Các thay đổi được lưu vào bảng cấu hình PostgreSQL.
       </InfoBox>
 
       {successMessage && (
@@ -133,13 +133,13 @@ const DatabaseConfigCard: React.FC<{
   return (
     <Card>
       <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>
-        <i className="fas fa-database" style={{ color: 'var(--success-color)' }}></i> Database Configuration
+        <i className="fas fa-database" style={{ color: 'var(--success-color)' }}></i> Cấu hình Cơ sở dữ liệu
       </h3>
-      <Badge type="success" style={{ marginBottom: '16px' }}>✅ Full Control</Badge>
-      
+      <Badge type="success" style={{ marginBottom: '16px' }}>✅ Toàn quyền Kiểm soát</Badge>
+
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label className="form-label">PostgreSQL Host</label>
+          <label className="form-label">Máy chủ PostgreSQL</label>
           <input
             type="text"
             className="form-input"
@@ -148,7 +148,7 @@ const DatabaseConfigCard: React.FC<{
           />
         </div>
         <div className="form-group">
-          <label className="form-label">PostgreSQL Max Connections</label>
+          <label className="form-label">Số kết nối tối đa PostgreSQL</label>
           <input
             type="number"
             className="form-input"
@@ -157,7 +157,7 @@ const DatabaseConfigCard: React.FC<{
           />
         </div>
         <div className="form-group">
-          <label className="form-label">MongoDB URI</label>
+          <label className="form-label">URI MongoDB</label>
           <input
             type="text"
             className="form-input"
@@ -166,7 +166,7 @@ const DatabaseConfigCard: React.FC<{
           />
         </div>
         <div className="form-group">
-          <label className="form-label">MongoDB Connection Pool Size</label>
+          <label className="form-label">Kích thước Pool kết nối MongoDB</label>
           <input
             type="number"
             className="form-input"
@@ -175,7 +175,7 @@ const DatabaseConfigCard: React.FC<{
           />
         </div>
         <div className="form-group">
-          <label className="form-label">Elasticsearch URL</label>
+          <label className="form-label">URL Elasticsearch</label>
           <input
             type="text"
             className="form-input"
@@ -189,7 +189,7 @@ const DatabaseConfigCard: React.FC<{
           icon="fas fa-save"
           disabled={saving}
         >
-          {saving ? 'Saving...' : 'Save Database Config'}
+          {saving ? 'Đang lưu...' : 'Lưu cấu hình Cơ sở dữ liệu'}
         </Button>
       </form>
     </Card>
@@ -332,13 +332,13 @@ const ApplicationConfigCard: React.FC<{
   return (
     <Card>
       <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>
-        <i className="fas fa-cog" style={{ color: 'var(--info-color)' }}></i> Application Settings
+        <i className="fas fa-cog" style={{ color: 'var(--info-color)' }}></i> Cài đặt Ứng dụng
       </h3>
-      <Badge type="success" style={{ marginBottom: '16px' }}>✅ Full Control</Badge>
-      
+      <Badge type="success" style={{ marginBottom: '16px' }}>✅ Toàn quyền Kiểm soát</Badge>
+
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label className="form-label">Session Timeout (minutes)</label>
+          <label className="form-label">Thời gian chờ phiên (phút)</label>
           <input
             type="number"
             className="form-input"
@@ -347,7 +347,7 @@ const ApplicationConfigCard: React.FC<{
           />
         </div>
         <div className="form-group">
-          <label className="form-label">Daily Question Limit per Student</label>
+          <label className="form-label">Giới hạn câu hỏi hàng ngày mỗi sinh viên</label>
           <input
             type="number"
             className="form-input"
@@ -356,7 +356,7 @@ const ApplicationConfigCard: React.FC<{
           />
         </div>
         <div className="form-group">
-          <label className="form-label">WebSocket Port</label>
+          <label className="form-label">Cổng WebSocket</label>
           <input
             type="number"
             className="form-input"
@@ -365,7 +365,7 @@ const ApplicationConfigCard: React.FC<{
           />
         </div>
         <div className="form-group">
-          <label className="form-label">Backend API Rate Limit (requests/min)</label>
+          <label className="form-label">Giới hạn tốc độ API Backend (yêu cầu/phút)</label>
           <input
             type="number"
             className="form-input"
@@ -374,7 +374,7 @@ const ApplicationConfigCard: React.FC<{
           />
         </div>
         <div className="form-group">
-          <label className="form-label">Cache Expiry (hours)</label>
+          <label className="form-label">Thời gian hết hạn Cache (giờ)</label>
           <input
             type="number"
             className="form-input"
@@ -390,7 +390,7 @@ const ApplicationConfigCard: React.FC<{
               onChange={(e) => setFormData({ ...formData, enableEmailNotifications: e.target.checked })}
               style={{ width: '20px', height: '20px' }}
             />
-            <span className="form-label" style={{ margin: 0 }}>Enable Email Notifications</span>
+            <span className="form-label" style={{ margin: 0 }}>Bật thông báo Email</span>
           </label>
         </div>
         <div className="form-group">
@@ -401,7 +401,7 @@ const ApplicationConfigCard: React.FC<{
               onChange={(e) => setFormData({ ...formData, enableRealtimeMonitoring: e.target.checked })}
               style={{ width: '20px', height: '20px' }}
             />
-            <span className="form-label" style={{ margin: 0 }}>Enable Real-time Monitoring</span>
+            <span className="form-label" style={{ margin: 0 }}>Bật giám sát thời gian thực</span>
           </label>
         </div>
         <Button
@@ -411,7 +411,7 @@ const ApplicationConfigCard: React.FC<{
           disabled={saving}
           style={{ marginTop: '16px' }}
         >
-          {saving ? 'Saving...' : 'Save Application Config'}
+          {saving ? 'Đang lưu...' : 'Lưu cấu hình Ứng dụng'}
         </Button>
       </form>
     </Card>
@@ -434,39 +434,39 @@ const IntegrationConfigCard: React.FC<{
   return (
     <Card>
       <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>
-        <i className="fas fa-plug" style={{ color: 'var(--warning-color)' }}></i> External Integrations
+        <i className="fas fa-plug" style={{ color: 'var(--warning-color)' }}></i> Tích hợp Bên ngoài
       </h3>
-      <Badge type="success" style={{ marginBottom: '16px' }}>✅ Full Control</Badge>
-      
+      <Badge type="success" style={{ marginBottom: '16px' }}>✅ Toàn quyền Kiểm soát</Badge>
+
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label className="form-label">YouTube Data API Key</label>
+          <label className="form-label">Khóa API YouTube Data</label>
           <input
             type="password"
             className="form-input"
             value={formData.youtubeApiKey}
             onChange={(e) => setFormData({ ...formData, youtubeApiKey: e.target.value })}
-            placeholder="Enter YouTube API key"
+            placeholder="Nhập khóa API YouTube"
           />
         </div>
         <div className="form-group">
-          <label className="form-label">GitHub API Token</label>
+          <label className="form-label">Token API GitHub</label>
           <input
             type="password"
             className="form-input"
             value={formData.githubApiToken}
             onChange={(e) => setFormData({ ...formData, githubApiToken: e.target.value })}
-            placeholder="Enter GitHub token"
+            placeholder="Nhập token GitHub"
           />
         </div>
         <div className="form-group">
-          <label className="form-label">Stack Overflow API Key</label>
+          <label className="form-label">Khóa API Stack Overflow</label>
           <input
             type="password"
             className="form-input"
             value={formData.stackOverflowApiKey}
             onChange={(e) => setFormData({ ...formData, stackOverflowApiKey: e.target.value })}
-            placeholder="Enter Stack Overflow key"
+            placeholder="Nhập khóa Stack Overflow"
           />
         </div>
         <div className="form-group">
@@ -477,7 +477,7 @@ const IntegrationConfigCard: React.FC<{
               onChange={(e) => setFormData({ ...formData, enableAutoFetch: e.target.checked })}
               style={{ width: '20px', height: '20px' }}
             />
-            <span className="form-label" style={{ margin: 0 }}>Enable Automatic Resource Fetching</span>
+            <span className="form-label" style={{ margin: 0 }}>Bật tự động tải tài nguyên</span>
           </label>
         </div>
         <Button
@@ -487,7 +487,7 @@ const IntegrationConfigCard: React.FC<{
           disabled={saving}
           style={{ marginTop: '16px' }}
         >
-          {saving ? 'Saving...' : 'Save Integration Config'}
+          {saving ? 'Đang lưu...' : 'Lưu cấu hình Tích hợp'}
         </Button>
       </form>
     </Card>

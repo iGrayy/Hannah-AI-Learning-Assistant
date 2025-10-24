@@ -79,32 +79,32 @@ export const Dashboard: React.FC = () => {
         <StatCard
           icon="fas fa-users"
           value={stats.totalUsers.toLocaleString()}
-          label="Total Users"
-          sublabel="✅ PostgreSQL query"
+          label="Tổng số người dùng"
+          sublabel="✅ Truy vấn PostgreSQL"
           color="purple"
           onClick={usersModal.open}
         />
         <StatCard
           icon="fas fa-comments"
           value={stats.activeConnections}
-          label="Active WebSocket Connections"
-          sublabel="✅ Backend real-time tracking"
+          label="Kết nối WebSocket đang hoạt động"
+          sublabel="✅ Theo dõi thời gian thực từ Backend"
           color="pink"
           onClick={connectionsModal.open}
         />
         <StatCard
           icon="fas fa-exchange-alt"
           value={stats.apiCallsToday}
-          label="Gemini API Calls Today"
-          sublabel="✅ Tracked locally in backend"
+          label="Lượt gọi Gemini API hôm nay"
+          sublabel="✅ Theo dõi cục bộ trong backend"
           color="blue"
           onClick={apiCallsModal.open}
         />
         <StatCard
           icon="fas fa-clock"
           value={`${stats.avgResponseTime}s`}
-          label="Avg Backend Response Time"
-          sublabel="✅ Measured from FastAPI"
+          label="Thời gian phản hồi trung bình"
+          sublabel="✅ Đo từ FastAPI"
           color="green"
           onClick={responseTimeModal.open}
         />
@@ -223,9 +223,9 @@ export const Dashboard: React.FC = () => {
                       conv.source === 'global_kb' ? 'success' : 'warning'
                     }>
                       {conv.source === 'personal_kb' ? (
-                        <><i className="fas fa-user-circle" style={{ marginRight: '4px' }}></i>Personal KB</>
+                        <><i className="fas fa-user-circle" style={{ marginRight: '4px' }}></i>KB Cá nhân</>
                       ) : conv.source === 'global_kb' ? (
-                        <><i className="fas fa-globe" style={{ marginRight: '4px' }}></i>Global KB</>
+                        <><i className="fas fa-globe" style={{ marginRight: '4px' }}></i>KB Toàn cục</>
                       ) : (
                         <><i className="fas fa-robot" style={{ marginRight: '4px' }}></i>Gemini API</>
                       )}
@@ -242,10 +242,10 @@ export const Dashboard: React.FC = () => {
       <Modal
         isOpen={usersModal.isOpen}
         onClose={usersModal.close}
-        title="Total Users Breakdown"
+        title="Chi tiết tổng số người dùng"
         footer={
           <Button variant="primary" onClick={usersModal.close}>
-            Close
+            Đóng
           </Button>
         }
       >
@@ -253,20 +253,20 @@ export const Dashboard: React.FC = () => {
           <div style={{ fontSize: '56px', fontWeight: 700, color: 'var(--primary-color)' }}>
             {stats.totalUsers.toLocaleString()}
           </div>
-          <p style={{ color: 'var(--text-secondary)' }}>Total Registered Users</p>
+          <p style={{ color: 'var(--text-secondary)' }}>Tổng số người dùng đã đăng ký</p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', textAlign: 'center' }}>
           <div>
             <div style={{ fontSize: '32px', fontWeight: 700 }}>1,180</div>
-            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Students</p>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Sinh viên</p>
           </div>
           <div>
             <div style={{ fontSize: '32px', fontWeight: 700 }}>67</div>
-            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Faculty</p>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Giảng viên</p>
           </div>
           <div>
             <div style={{ fontSize: '32px', fontWeight: 700 }}>3</div>
-            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Admins</p>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Quản trị viên</p>
           </div>
         </div>
       </Modal>
@@ -275,10 +275,10 @@ export const Dashboard: React.FC = () => {
       <Modal
         isOpen={connectionsModal.isOpen}
         onClose={connectionsModal.close}
-        title="Active WebSocket Connections"
+        title="Kết nối WebSocket đang hoạt động"
         footer={
           <Button variant="primary" onClick={connectionsModal.close}>
-            Close
+            Đóng
           </Button>
         }
       >
@@ -286,11 +286,11 @@ export const Dashboard: React.FC = () => {
           <div style={{ fontSize: '56px', fontWeight: 700, color: 'var(--primary-color)' }}>
             {stats.activeConnections}
           </div>
-          <p style={{ color: 'var(--text-secondary)' }}>Current Active Connections</p>
+          <p style={{ color: 'var(--text-secondary)' }}>Kết nối đang hoạt động hiện tại</p>
         </div>
         <div className="info-box">
           <i className="fas fa-info-circle"></i>
-          <span>Tracked in real-time from FastAPI backend WebSocket manager</span>
+          <span>Được theo dõi trong thời gian thực từ trình quản lý WebSocket của FastAPI backend</span>
         </div>
       </Modal>
 
@@ -298,30 +298,30 @@ export const Dashboard: React.FC = () => {
       <Modal
         isOpen={apiCallsModal.isOpen}
         onClose={apiCallsModal.close}
-        title="Gemini API Calls Details"
+        title="Chi tiết Lượt gọi Gemini API"
         footer={
           <Button variant="primary" onClick={apiCallsModal.close}>
-            Close
+            Đóng
           </Button>
         }
       >
         <div className="info-box">
           <i className="fas fa-info-circle"></i>
-          Tracked by backend wrapper around Gemini API calls
+          Được theo dõi bởi trình bao bọc backend quanh các lệnh gọi Gemini API
         </div>
         <div style={{ textAlign: 'center', marginTop: '24px' }}>
           <div style={{ fontSize: '56px', fontWeight: 700, color: 'var(--primary-color)' }}>
             {stats.apiCallsToday}
           </div>
-          <p style={{ color: 'var(--text-secondary)' }}>Total API Calls Today</p>
+          <p style={{ color: 'var(--text-secondary)' }}>Tổng số Lượt gọi API hôm nay</p>
         </div>
         <div style={{ marginTop: '24px' }}>
           <div className="metric-row">
-            <span className="metric-label">Successful Calls</span>
+            <span className="metric-label">Lượt gọi thành công</span>
             <span className="metric-value">454 (99.5%)</span>
           </div>
           <div className="metric-row">
-            <span className="metric-label">Failed Calls</span>
+            <span className="metric-label">Lượt gọi thất bại</span>
             <span className="metric-value">2 (0.5%)</span>
           </div>
         </div>
@@ -331,38 +331,38 @@ export const Dashboard: React.FC = () => {
       <Modal
         isOpen={responseTimeModal.isOpen}
         onClose={responseTimeModal.close}
-        title="Backend Response Time Analysis"
+        title="Phân tích Thời gian Phản hồi Backend"
         footer={
           <Button variant="primary" onClick={responseTimeModal.close}>
-            Close
+            Đóng
           </Button>
         }
       >
         <div className="info-box">
           <i className="fas fa-info-circle"></i>
-          Measured from FastAPI middleware - includes all processing time
+          Được đo từ middleware FastAPI - bao gồm toàn bộ thời gian xử lý
         </div>
         <div style={{ textAlign: 'center', marginTop: '24px' }}>
           <div style={{ fontSize: '56px', fontWeight: 700, color: 'var(--success-color)' }}>
             {stats.avgResponseTime}s
           </div>
-          <p style={{ color: 'var(--text-secondary)' }}>Average Total Response Time</p>
+          <p style={{ color: 'var(--text-secondary)' }}>Thời gian Phản hồi Trung bình Tổng</p>
         </div>
-        <h4 style={{ margin: '20px 0 12px' }}>Breakdown:</h4>
+        <h4 style={{ margin: '20px 0 12px' }}>Chi tiết:</h4>
         <div className="metric-row">
-          <span className="metric-label">Backend Processing</span>
+          <span className="metric-label">Xử lý Backend</span>
           <span className="metric-value">0.2s (14%)</span>
         </div>
         <div className="metric-row">
-          <span className="metric-label">Database Queries</span>
+          <span className="metric-label">Truy vấn Cơ sở dữ liệu</span>
           <span className="metric-value">0.1s (7%)</span>
         </div>
         <div className="metric-row">
-          <span className="metric-label">Gemini API Call</span>
+          <span className="metric-label">Gọi Gemini API</span>
           <span className="metric-value">1.0s (71%)</span>
         </div>
         <div className="metric-row">
-          <span className="metric-label">Response Formatting</span>
+          <span className="metric-label">Định dạng Phản hồi</span>
           <span className="metric-value">0.1s (7%)</span>
         </div>
       </Modal>
